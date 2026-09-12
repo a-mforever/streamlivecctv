@@ -1,446 +1,508 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>CCTV Regie</title>
+<meta charset="UTF-8">
 
-  <style>
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0">
 
-    * {
-      box-sizing: border-box;
-    }
+<title>CCTV Regie</title>
 
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 
-      background: #080808;
-      color: white;
 
-      font-family: Arial, Helvetica, sans-serif;
-    }
+<style>
 
-    body {
-      padding: 18px;
-    }
+* {
+    box-sizing: border-box;
+}
 
+html,
+body {
 
-    .container {
-      width: 100%;
-      max-width: 600px;
+    margin: 0;
+    padding: 0;
 
-      margin: 0 auto;
-    }
+    min-height: 100%;
 
+    background: #080808;
 
-    /* HEADER */
+    color: white;
 
-    .header {
-      background: #111;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
 
-      border: 1px solid #292929;
-      border-radius: 12px;
+body {
+    padding: 14px;
+}
 
-      padding: 18px;
 
-      margin-bottom: 15px;
-    }
+.container {
 
+    width: 100%;
 
-    .title {
-      font-size: 23px;
-      font-weight: 800;
+    max-width: 600px;
 
-      margin-bottom: 8px;
-    }
+    margin: auto;
+}
 
 
-    .subtitle {
-      color: #888;
-      font-size: 13px;
-    }
+/* HEADER */
 
+.header {
 
-    /* STATUS */
+    background: #111;
 
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+    border:
+        1px solid #292929;
 
-      margin-top: 15px;
+    border-radius: 12px;
 
-      color: #777;
-      font-size: 13px;
-    }
+    padding: 18px;
 
+    margin-bottom: 14px;
+}
 
-    .status-dot {
-      width: 10px;
-      height: 10px;
+.title {
 
-      border-radius: 50%;
+    font-size: 23px;
 
-      background: #555;
-    }
+    font-weight: 900;
 
+    margin-bottom: 7px;
+}
 
-    .status.online {
-      color: #4bdd72;
-    }
+.subtitle {
 
+    color: #888;
 
-    .status.online .status-dot {
-      background: #25dc5b;
+    font-size: 13px;
+}
 
-      box-shadow:
-        0 0 9px rgba(37, 220, 91, .8);
-    }
 
+/* STATUS */
 
-    /* BOX */
+.status {
 
-    .box {
-      background: #111;
+    display: flex;
 
-      border: 1px solid #292929;
-      border-radius: 12px;
+    align-items: center;
 
-      padding: 18px;
+    gap: 9px;
 
-      margin-bottom: 15px;
-    }
+    margin-top: 15px;
 
+    color: #777;
 
-    .box-title {
-      font-size: 15px;
-      font-weight: 800;
+    font-size: 13px;
+}
 
-      margin-bottom: 12px;
-    }
+.statusDot {
 
+    width: 10px;
+    height: 10px;
 
-    /* TEXT */
+    border-radius: 50%;
 
-    textarea {
-      width: 100%;
+    background: #555;
+}
 
-      min-height: 110px;
+.status.online {
 
-      resize: vertical;
+    color: #4bdd72;
+}
 
-      padding: 13px;
+.status.online .statusDot {
 
-      background: #080808;
+    background: #25dc5b;
 
-      color: white;
+    box-shadow:
+        0 0 9px
+        rgba(37,220,91,.8);
+}
 
-      border: 1px solid #333;
-      border-radius: 8px;
 
-      outline: none;
+/* BOX */
 
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 15px;
-    }
+.box {
 
+    background: #111;
 
-    textarea:focus {
-      border-color: #555;
-    }
+    border:
+        1px solid #292929;
 
+    border-radius: 12px;
 
-    /* BUTTON */
+    padding: 17px;
 
-    button {
-      width: 100%;
+    margin-bottom: 14px;
+}
 
-      border: 0;
+.boxTitle {
 
-      border-radius: 8px;
+    font-size: 14px;
 
-      padding: 14px;
+    font-weight: 900;
 
-      margin-top: 10px;
+    margin-bottom: 11px;
+}
 
-      color: white;
 
-      background: #252525;
+/* TEXT */
 
-      cursor: pointer;
+textarea {
 
-      font-size: 14px;
-      font-weight: 800;
-    }
+    width: 100%;
 
+    min-height: 105px;
 
-    button:hover {
-      background: #333;
-    }
+    resize: vertical;
 
+    padding: 13px;
 
-    .send-button {
-      background: #14652b;
-    }
+    background: #080808;
 
+    color: white;
 
-    .send-button:hover {
-      background: #1b8038;
-    }
+    border:
+        1px solid #333;
 
+    border-radius: 8px;
 
-    .privacy-button {
-      background: #711d1d;
+    outline: none;
 
-      font-size: 15px;
-    }
+    font-family: Arial, sans-serif;
 
+    font-size: 15px;
+}
 
-    .privacy-button:hover {
-      background: #912323;
-    }
+textarea:focus {
 
+    border-color: #666;
+}
 
-    .privacy-button.active {
-      background: #a52828;
-    }
 
+/* BUTTON */
 
-    /* COUNTDOWN */
+button {
 
-    .countdown {
-      text-align: center;
+    width: 100%;
 
-      margin-top: 13px;
+    border: 0;
 
-      color: #888;
+    border-radius: 8px;
 
-      font-size: 13px;
-    }
+    padding: 14px;
 
+    margin-top: 9px;
 
-    .countdown strong {
-      color: white;
-      font-size: 22px;
-    }
+    color: white;
 
+    background: #252525;
 
-    /* QUICK TEXT */
+    cursor: pointer;
 
-    .quick-grid {
-      display: grid;
+    font-size: 14px;
 
-      grid-template-columns:
-        repeat(2, 1fr);
+    font-weight: 900;
+}
 
-      gap: 8px;
-    }
+button:hover {
 
+    background: #353535;
+}
 
-    .quick-grid button {
-      margin-top: 0;
-    }
+button:disabled {
 
+    opacity: .45;
 
-    /* LOG */
+    cursor: default;
+}
 
-    .log {
-      color: #777;
 
-      font-size: 12px;
-      line-height: 1.6;
+/* SEND */
 
-      max-height: 130px;
+.send {
 
-      overflow-y: auto;
-    }
+    background: #14652b;
+}
 
+.send:hover {
 
-    .log-entry {
-      padding: 4px 0;
+    background: #1b8038;
+}
 
-      border-bottom:
+
+/* PRIVACY */
+
+.privacy {
+
+    background: #711d1d;
+
+    font-size: 15px;
+}
+
+.privacy:hover {
+
+    background: #902424;
+}
+
+
+/* QUICK */
+
+.quick {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 8px;
+}
+
+.quick button {
+
+    margin-top: 0;
+}
+
+
+/* COUNTDOWN */
+
+.countdown {
+
+    margin-top: 12px;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+.countdown strong {
+
+    display: block;
+
+    color: white;
+
+    font-size: 25px;
+
+    margin-top: 3px;
+}
+
+
+/* LOG */
+
+.log {
+
+    max-height: 150px;
+
+    overflow-y: auto;
+
+    color: #777;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+.logEntry {
+
+    padding:
+        5px 0;
+
+    border-bottom:
         1px solid #1d1d1d;
+}
+
+
+/* MOBILE */
+
+@media (
+    max-width: 450px
+) {
+
+    body {
+        padding: 9px;
     }
 
+    .quick {
 
-    /* MOBILE */
-
-    @media (max-width: 450px) {
-
-      body {
-        padding: 10px;
-      }
-
-      .quick-grid {
-        grid-template-columns: 1fr;
-      }
+        grid-template-columns:
+            1fr;
 
     }
 
-  </style>
+}
+
+</style>
+
 </head>
 
 
 <body>
 
+
 <div class="container">
 
 
-  <!-- HEADER -->
+    <div class="header">
 
-  <div class="header">
+        <div class="title">
+            CCTV REGIE
+        </div>
 
-    <div class="title">
-      CCTV REGIE
-    </div>
-
-    <div class="subtitle">
-      Steuerung für den Minecraft-Livestream
-    </div>
+        <div class="subtitle">
+            Minecraft-Livestream steuern
+        </div>
 
 
-    <div
-      class="status"
-      id="status"
-    >
+        <div
+            id="status"
+            class="status">
 
-      <span class="status-dot"></span>
+            <span class="statusDot"></span>
 
-      <span id="statusText">
-        Verbindung wird hergestellt...
-      </span>
+            <span id="statusText">
+                Verbindung wird hergestellt...
+            </span>
 
-    </div>
-
-  </div>
-
-
-
-  <!-- TEXT -->
-
-  <div class="box">
-
-    <div class="box-title">
-      TEXT EINBLENDEN
-    </div>
-
-
-    <textarea
-      id="textInput"
-      maxlength="250"
-      placeholder="Text für den Stream eingeben..."
-    ></textarea>
-
-
-    <button
-      class="send-button"
-      id="sendText"
-    >
-      TEXT FÜR 10 SEKUNDEN EINBLENDEN
-    </button>
-
-  </div>
-
-
-
-  <!-- SCHNELLTEXT -->
-
-  <div class="box">
-
-    <div class="box-title">
-      SCHNELLTEXTE
-    </div>
-
-
-    <div class="quick-grid">
-
-      <button
-        data-text="Wir sind gleich wieder da!"
-      >
-        GLEICH WIEDER DA
-      </button>
-
-
-      <button
-        data-text="Kurze Pause"
-      >
-        KURZE PAUSE
-      </button>
-
-
-      <button
-        data-text="Einen Moment bitte..."
-      >
-        EINEN MOMENT
-      </button>
-
-
-      <button
-        data-text="Der Stream geht gleich weiter."
-      >
-        STREAM GEHT WEITER
-      </button>
+        </div>
 
     </div>
 
-  </div>
 
 
+    <!-- TEXT -->
 
-  <!-- SICHTSCHUTZ -->
+    <div class="box">
 
-  <div class="box">
-
-    <div class="box-title">
-      SICHTSCHUTZ
-    </div>
-
-
-    <button
-      class="privacy-button"
-      id="privacyButton"
-    >
-      STREAM SICHTSCHUTZ · 10 SEKUNDEN
-    </button>
+        <div class="boxTitle">
+            TEXT EINBLENDEN
+        </div>
 
 
-    <div
-      class="countdown"
-      id="countdown"
-    >
-      Bereit
-    </div>
-
-  </div>
+        <textarea
+            id="textInput"
+            maxlength="250"
+            placeholder="Text für den Stream..."></textarea>
 
 
+        <button
+            id="sendText"
+            class="send">
 
-  <!-- LOG -->
+            TEXT FÜR 10 SEKUNDEN EINBLENDEN
 
-  <div class="box">
-
-    <div class="box-title">
-      REGIE-LOG
-    </div>
-
-
-    <div
-      class="log"
-      id="log"
-    >
-
-      <div class="log-entry">
-        Regie gestartet.
-      </div>
+        </button>
 
     </div>
 
-  </div>
+
+
+    <!-- SCHNELLTEXTE -->
+
+    <div class="box">
+
+        <div class="boxTitle">
+            SCHNELLTEXTE
+        </div>
+
+
+        <div class="quick">
+
+            <button
+                data-text="Wir sind gleich wieder da!">
+
+                GLEICH WIEDER DA
+
+            </button>
+
+
+            <button
+                data-text="Kurze Pause">
+
+                KURZE PAUSE
+
+            </button>
+
+
+            <button
+                data-text="Einen Moment bitte...">
+
+                EINEN MOMENT
+
+            </button>
+
+
+            <button
+                data-text="Der Stream geht gleich weiter.">
+
+                STREAM GEHT WEITER
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SICHTSCHUTZ -->
+
+    <div class="box">
+
+        <div class="boxTitle">
+            SICHTSCHUTZ
+        </div>
+
+
+        <button
+            id="privacyButton"
+            class="privacy">
+
+            STREAM SICHTSCHUTZ · 10 SEKUNDEN
+
+        </button>
+
+
+        <div
+            id="countdown"
+            class="countdown">
+
+            Bereit
+
+        </div>
+
+    </div>
+
+
+
+    <!-- LOG -->
+
+    <div class="box">
+
+        <div class="boxTitle">
+            REGIE-LOG
+        </div>
+
+
+        <div
+            id="log"
+            class="log">
+
+            <div class="logEntry">
+                Regie gestartet.
+            </div>
+
+        </div>
+
+    </div>
 
 
 </div>
@@ -449,369 +511,522 @@
 
 <script>
 
-  /*
-  ============================================================
-  CCTV REGIE
-  ============================================================
 
-  Diese Seite ist für dein Handy gedacht.
-
-  Sie soll später Befehle an index.html schicken:
-
-  TEXT
-  ↓
-  10 Sekunden auf Stream
-
-  SICHTSCHUTZ
-  ↓
-  10 Sekunden schwarzer Bildschirm
-  ↓
-  Warnsignal
-  ↓
-  "STREAM SICHTSCHUTZ"
-
-  ============================================================
-  */
+/* =========================================================
+   EINSTELLUNGEN
+========================================================= */
 
 
-  const status =
-    document.getElementById("status");
+/*
+    MUSS EXAKT DIESELBE ID SEIN
+    WIE IN index.html
+*/
 
-  const statusText =
-    document.getElementById("statusText");
-
-  const textInput =
-    document.getElementById("textInput");
-
-  const sendText =
-    document.getElementById("sendText");
-
-  const privacyButton =
-    document.getElementById("privacyButton");
-
-  const countdown =
-    document.getElementById("countdown");
-
-  const log =
-    document.getElementById("log");
+const STREAM_ID =
+    "cctv-live-stream";
 
 
-  /*
-  ============================================================
-  LOG
-  ============================================================
-  */
+/* =========================================================
+   ELEMENTE
+========================================================= */
 
-  function addLog(text) {
+const status =
+    document.getElementById(
+        "status"
+    );
+
+const statusText =
+    document.getElementById(
+        "statusText"
+    );
+
+const textInput =
+    document.getElementById(
+        "textInput"
+    );
+
+const sendText =
+    document.getElementById(
+        "sendText"
+    );
+
+const privacyButton =
+    document.getElementById(
+        "privacyButton"
+    );
+
+const countdown =
+    document.getElementById(
+        "countdown"
+    );
+
+const log =
+    document.getElementById(
+        "log"
+    );
+
+
+/* =========================================================
+   PEER
+========================================================= */
+
+const peer =
+    new Peer();
+
+
+let connection =
+    null;
+
+
+/* =========================================================
+   LOG
+========================================================= */
+
+function addLog(
+    text
+) {
 
     const entry =
-      document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     entry.className =
-      "log-entry";
+        "logEntry";
+
 
     const time =
-      new Date().toLocaleTimeString(
-        "de-DE",
-        {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        }
-      );
+        new Date()
+            .toLocaleTimeString(
+                "de-DE",
+                {
+                    hour:
+                        "2-digit",
+
+                    minute:
+                        "2-digit",
+
+                    second:
+                        "2-digit"
+                }
+            );
+
 
     entry.textContent =
-      "[" + time + "] " + text;
-
-    log.prepend(entry);
-
-  }
-
+        "[" +
+        time +
+        "] " +
+        text;
 
 
-  /*
-  ============================================================
-  STATUS
-  ============================================================
-  */
+    log.prepend(
+        entry
+    );
 
-  function setOnline() {
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function online() {
 
     status.classList.add(
-      "online"
+        "online"
     );
 
     statusText.textContent =
-      "Regie verbunden";
+        "Mit Stream verbunden";
 
-  }
+    sendText.disabled =
+        false;
+
+    privacyButton.disabled =
+        false;
+
+}
 
 
-
-  function setOffline() {
+function offline() {
 
     status.classList.remove(
-      "online"
+        "online"
     );
 
     statusText.textContent =
-      "Keine Verbindung";
+        "Stream nicht erreichbar";
 
-  }
+    sendText.disabled =
+        true;
+
+    privacyButton.disabled =
+        true;
+
+}
 
 
+/* =========================================================
+   PEER ÖFFNET
+========================================================= */
 
-  /*
-  ============================================================
-  SEND COMMAND
-  ============================================================
-  */
+peer.on(
+    "open",
+    () => {
 
-  function sendCommand(
-    command
-  ) {
+        addLog(
+            "Regie-Verbindung gestartet."
+        );
 
-    /*
-      HIER kommt später die echte
-      Realtime-Verbindung rein.
 
-      Zum Beispiel:
+        connectToStream();
 
-      realtime.send(command)
+    }
+);
 
-    */
 
-    console.log(
-      "REGIE COMMAND:",
-      command
+/* =========================================================
+   STREAM VERBINDEN
+========================================================= */
+
+function connectToStream() {
+
+    statusText.textContent =
+        "Verbinde mit Stream...";
+
+
+    connection =
+        peer.connect(
+            STREAM_ID,
+            {
+                reliable: true,
+
+                serialization: "json"
+            }
+        );
+
+
+    connection.on(
+        "open",
+        () => {
+
+            online();
+
+            addLog(
+                "STREAM VERBUNDEN."
+            );
+
+        }
     );
 
-  }
+
+    connection.on(
+        "close",
+        () => {
+
+            offline();
+
+            addLog(
+                "Stream-Verbindung beendet."
+            );
+
+            /*
+                Nach 3 Sekunden erneut versuchen.
+            */
+
+            setTimeout(
+                connectToStream,
+                3000
+            );
+
+        }
+    );
 
 
+    connection.on(
+        "error",
+        error => {
 
-  /*
-  ============================================================
-  TEXT SENDEN
-  ============================================================
-  */
+            console.error(
+                error
+            );
 
-  sendText.addEventListener(
+            offline();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FEHLER
+========================================================= */
+
+peer.on(
+    "error",
+    error => {
+
+        console.error(
+            "PeerJS:",
+            error
+        );
+
+
+        if (
+            error.type ===
+            "peer-unavailable"
+        ) {
+
+            statusText.textContent =
+                "Stream ist nicht online.";
+
+            setTimeout(
+                connectToStream,
+                3000
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   BEFEHL SENDEN
+========================================================= */
+
+function sendCommand(
+    command
+) {
+
+    if (
+        !connection ||
+        !connection.open
+    ) {
+
+        addLog(
+            "NICHT VERBUNDEN."
+        );
+
+        return false;
+
+    }
+
+
+    connection.send(
+        command
+    );
+
+    return true;
+
+}
+
+
+/* =========================================================
+   TEXT
+========================================================= */
+
+sendText.addEventListener(
     "click",
     () => {
 
-      const text =
-        textInput.value.trim();
+        const text =
+            textInput.value.trim();
 
 
-      if (!text) {
+        if (!text) {
 
-        textInput.focus();
+            textInput.focus();
 
-        return;
+            return;
 
-      }
-
-
-      sendCommand({
-
-        type: "text",
-
-        text: text,
-
-        duration: 10000
-
-      });
+        }
 
 
-      addLog(
-        'Text eingeblendet: "' +
-        text +
-        '"'
-      );
-
-
-      textInput.value = "";
-
-    }
-  );
-
-
-
-  /*
-  ============================================================
-  SCHNELLTEXTE
-  ============================================================
-  */
-
-  document
-    .querySelectorAll(
-      "[data-text]"
-    )
-    .forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const text =
-              button.dataset.text;
-
-
+        const sent =
             sendCommand({
 
-              type: "text",
+                type:
+                    "text",
 
-              text: text,
+                text:
+                    text,
 
-              duration: 10000
+                duration:
+                    10000
 
             });
 
 
-            addLog(
-              'Schnelltext: "' +
-              text +
-              '"'
-            );
+        if (!sent) {
 
-          }
+            return;
+
+        }
+
+
+        addLog(
+            "Text gesendet: " +
+            text
         );
 
-      }
+
+        textInput.value =
+            "";
+
+    }
+);
+
+
+/* =========================================================
+   SCHNELLTEXTE
+========================================================= */
+
+document
+    .querySelectorAll(
+        "[data-text]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const text =
+                        button.dataset.text;
+
+
+                    const sent =
+                        sendCommand({
+
+                            type:
+                                "text",
+
+                            text:
+                                text,
+
+                            duration:
+                                10000
+
+                        });
+
+
+                    if (!sent) {
+
+                        return;
+
+                    }
+
+
+                    addLog(
+                        "Schnelltext gesendet."
+                    );
+
+                }
+            );
+
+        }
     );
 
 
+/* =========================================================
+   SICHTSCHUTZ
+========================================================= */
 
-  /*
-  ============================================================
-  SICHTSCHUTZ
-  ============================================================
-  */
-
-  privacyButton.addEventListener(
+privacyButton.addEventListener(
     "click",
     () => {
 
-      /*
-      -----------------------------------------------
-      Befehl an Stream senden
-      -----------------------------------------------
-      */
+        const sent =
+            sendCommand({
 
-      sendCommand({
+                type:
+                    "privacy",
 
-        type: "privacy",
+                duration:
+                    10000
 
-        duration: 10000
-
-      });
+            });
 
 
-      privacyButton.disabled =
-        true;
+        if (!sent) {
 
-      privacyButton.classList.add(
-        "active"
-      );
+            return;
 
-
-      addLog(
-        "Sichtschutz für 10 Sekunden aktiviert."
-      );
+        }
 
 
-      /*
-      -----------------------------------------------
-      COUNTDOWN
-      -----------------------------------------------
-      */
-
-      let seconds =
-        10;
-
-
-      countdown.innerHTML =
-        "Sichtschutz aktiv<br>" +
-        "<strong>" +
-        seconds +
-        "</strong>";
-
-
-      const timer =
-        setInterval(
-          () => {
-
-            seconds--;
-
-
-            if (seconds <= 0) {
-
-              clearInterval(
-                timer
-              );
-
-
-              countdown.textContent =
-                "Sichtschutz beendet";
-
-
-              privacyButton.disabled =
-                false;
-
-
-              privacyButton.classList.remove(
-                "active"
-              );
-
-
-              return;
-
-            }
-
-
-            countdown.innerHTML =
-              "Sichtschutz aktiv<br>" +
-              "<strong>" +
-              seconds +
-              "</strong>";
-
-          },
-          1000
+        addLog(
+            "Sichtschutz aktiviert."
         );
 
+
+        privacyButton.disabled =
+            true;
+
+
+        let seconds =
+            10;
+
+
+        countdown.innerHTML =
+            "Sichtschutz aktiv<br>" +
+            "<strong>" +
+            seconds +
+            "</strong>";
+
+
+        const timer =
+            setInterval(
+                () => {
+
+                    seconds--;
+
+
+                    if (
+                        seconds <= 0
+                    ) {
+
+                        clearInterval(
+                            timer
+                        );
+
+
+                        countdown.textContent =
+                            "Sichtschutz beendet";
+
+
+                        privacyButton.disabled =
+                            false;
+
+
+                        return;
+
+                    }
+
+
+                    countdown.innerHTML =
+                        "Sichtschutz aktiv<br>" +
+                        "<strong>" +
+                        seconds +
+                        "</strong>";
+
+                },
+                1000
+            );
+
     }
-  );
+);
 
 
+/* =========================================================
+   START
+========================================================= */
 
-  /*
-  ============================================================
-  TESTSTATUS
-  ============================================================
-  */
+offline();
 
-  /*
-    Für den ersten UI-Test setzen wir die Regie
-    auf verbunden.
-
-    Die echte Realtime-Verbindung kommt als nächster
-    technischer Teil.
-  */
-
-  setTimeout(
-    () => {
-
-      setOnline();
-
-      addLog(
-        "Regie bereit."
-      );
-
-    },
-    500
-  );
 
 </script>
 

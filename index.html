@@ -8,172 +8,162 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#000;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow:hidden;
 }
 
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
+#app{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    background:#000;
 }
 
-#app {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background: #000;
+video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#000;
 }
 
-#remoteVideo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    background: #000;
-    display: none;
+#remoteVideo{display:none}
+#localVideo{display:none}
+
+#waiting{
+    position:absolute;
+    inset:0;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:#000;
+    color:#fff;
 }
 
-#localVideo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    background: #000;
-    display: none;
+.signal{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:#e00000;
+    box-shadow:0 0 18px #e00000;
+    margin-bottom:18px;
 }
 
-#waiting {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background: #000;
-    color: white;
-    z-index: 5;
+#waitingText{
+    font-size:18px;
+    letter-spacing:3px;
+    text-align:center;
 }
 
-#waiting .signal {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #e00000;
-    box-shadow: 0 0 18px #e00000;
-    margin-bottom: 18px;
+#startBox{
+    position:absolute;
+    left:50%;
+    bottom:35px;
+    transform:translateX(-50%);
+    z-index:20;
+    display:block;
 }
 
-#waitingText {
-    font-size: 18px;
-    letter-spacing: 3px;
-    color: #ddd;
+button{
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(15,15,15,.9);
+    color:#fff;
+    padding:13px 22px;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:14px;
 }
 
-#startBox {
-    position: absolute;
-    left: 50%;
-    bottom: 35px;
-    transform: translateX(-50%);
-    z-index: 20;
-    display: none;
+button:hover{
+    background:#292929;
 }
 
-button {
-    border: 1px solid rgba(255,255,255,.35);
-    background: rgba(15,15,15,.85);
-    color: white;
-    padding: 13px 22px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
+#liveBadge{
+    position:absolute;
+    top:18px;
+    left:18px;
+    z-index:15;
+    display:none;
+    align-items:center;
+    gap:8px;
+    color:#fff;
+    font-size:12px;
+    letter-spacing:2px;
+    background:rgba(0,0,0,.55);
+    padding:7px 10px;
+    border-radius:3px;
 }
 
-button:hover {
-    background: rgba(50,50,50,.95);
+#liveDot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#e00000;
+    box-shadow:0 0 10px #e00000;
 }
 
-#liveBadge {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    z-index: 15;
-    display: none;
-    align-items: center;
-    gap: 8px;
-    color: white;
-    font-size: 12px;
-    letter-spacing: 2px;
-    background: rgba(0,0,0,.55);
-    padding: 7px 10px;
-    border-radius: 3px;
+#regieText{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    z-index:40;
+    max-width:85%;
+    color:#fff;
+    font-size:clamp(25px,5vw,75px);
+    font-weight:bold;
+    text-align:center;
+    text-shadow:0 3px 15px rgba(0,0,0,.9);
+    display:none;
 }
 
-#liveDot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #e00000;
-    box-shadow: 0 0 10px #e00000;
+#privacy{
+    position:absolute;
+    inset:0;
+    z-index:50;
+    background:#000;
+    color:#fff;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
 }
 
-#privacy {
-    position: absolute;
-    inset: 0;
-    z-index: 50;
-    background: #000;
-    color: white;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+#privacySignal{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#e00000;
+    box-shadow:0 0 30px #e00000;
+    animation:blink .7s infinite alternate;
+    margin-bottom:24px;
 }
 
-#privacySignal {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #e00000;
-    box-shadow: 0 0 30px #e00000;
-    animation: blink .7s infinite alternate;
-    margin-bottom: 24px;
+#privacyTitle{
+    font-size:25px;
+    letter-spacing:5px;
 }
 
-#privacyTitle {
-    font-size: 25px;
-    letter-spacing: 5px;
+#privacySub{
+    margin-top:12px;
+    color:#888;
+    font-size:12px;
+    letter-spacing:2px;
 }
 
-#privacySub {
-    margin-top: 12px;
-    color: #888;
-    font-size: 12px;
-    letter-spacing: 2px;
-}
-
-#regieText {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 40;
-    max-width: 85%;
-    color: white;
-    font-size: clamp(25px, 5vw, 75px);
-    font-weight: bold;
-    text-align: center;
-    text-shadow: 0 3px 15px rgba(0,0,0,.9);
-    display: none;
-}
-
-@keyframes blink {
-    from { opacity: .35; }
-    to { opacity: 1; }
+@keyframes blink{
+    from{opacity:.35}
+    to{opacity:1}
 }
 </style>
 </head>
@@ -187,7 +177,7 @@ button:hover {
 
     <div id="waiting">
         <div class="signal"></div>
-        <div id="waitingText">STREAM WIRD GELADEN...</div>
+        <div id="waitingText">STREAM IST OFFLINE</div>
     </div>
 
     <div id="startBox">
@@ -204,56 +194,82 @@ button:hover {
     <div id="privacy">
         <div id="privacySignal"></div>
         <div id="privacyTitle">STREAM SICHTSCHUTZ</div>
-        <div id="privacySub">ÜBERTRAGUNG VORÜBERGEHEND AUSGEBLENDET</div>
+        <div id="privacySub">
+            ÜBERTRAGUNG VORÜBERGEHEND AUSGEBLENDET
+        </div>
     </div>
 
 </div>
 
 <script>
+
 /* =========================================================
    SUPABASE
-   ========================================================= */
+========================================================= */
 
-const SUPABASE_URL = "https://zxaczahnnnztcglsinej.supabase.co";
+const SUPABASE_URL =
+    "https://zxaczahnnnztcglsinej.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_K9b2XabV1bJz9oCj7W6eaQ_AtBeXzm4";
 
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 /* =========================================================
    EINSTELLUNGEN
-   ========================================================= */
+========================================================= */
 
 const ROOM = "cctv-live-stream";
 
 const rtcConfig = {
     iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" }
+        {
+            urls:"stun:stun.l.google.com:19302"
+        },
+        {
+            urls:"stun:stun1.l.google.com:19302"
+        }
     ]
 };
 
 /* =========================================================
    ELEMENTE
-   ========================================================= */
+========================================================= */
 
-const remoteVideo = document.getElementById("remoteVideo");
-const localVideo = document.getElementById("localVideo");
-const waiting = document.getElementById("waiting");
-const waitingText = document.getElementById("waitingText");
-const startBox = document.getElementById("startBox");
-const startButton = document.getElementById("startButton");
-const liveBadge = document.getElementById("liveBadge");
-const regieText = document.getElementById("regieText");
-const privacy = document.getElementById("privacy");
+const remoteVideo =
+    document.getElementById("remoteVideo");
+
+const localVideo =
+    document.getElementById("localVideo");
+
+const waiting =
+    document.getElementById("waiting");
+
+const waitingText =
+    document.getElementById("waitingText");
+
+const startBox =
+    document.getElementById("startBox");
+
+const startButton =
+    document.getElementById("startButton");
+
+const liveBadge =
+    document.getElementById("liveBadge");
+
+const regieText =
+    document.getElementById("regieText");
+
+const privacy =
+    document.getElementById("privacy");
 
 /* =========================================================
-   STATUS
-   ========================================================= */
+   VARIABLEN
+========================================================= */
 
 let channel = null;
 
@@ -262,8 +278,7 @@ let stream = null;
 let streamerSession = null;
 
 let viewerId =
-    "viewer-" +
-    crypto.randomUUID();
+    "viewer-" + crypto.randomUUID();
 
 let viewerPeer = null;
 let viewerConnected = false;
@@ -271,207 +286,220 @@ let viewerConnected = false;
 const streamerPeers = new Map();
 
 /* =========================================================
-   SUPABASE CHANNEL
-   ========================================================= */
+   CHANNEL VERBINDEN
+========================================================= */
 
-async function connectChannel() {
+async function connectChannel(){
 
-    channel = supabaseClient.channel(ROOM, {
-        config: {
-            broadcast: {
-                self: false
+    channel =
+        supabaseClient.channel(
+            ROOM,
+            {
+                config:{
+                    broadcast:{
+                        self:false
+                    }
+                }
             }
-        }
-    });
+        );
 
     channel.on(
         "broadcast",
-        { event: "signal" },
-        ({ payload }) => {
+        {event:"signal"},
+        ({payload})=>{
             handleSignal(payload);
         }
     );
 
     channel.on(
         "broadcast",
-        { event: "command" },
-        ({ payload }) => {
+        {event:"command"},
+        ({payload})=>{
             handleCommand(payload);
         }
     );
 
-    const status = await new Promise((resolve) => {
+    channel.subscribe((status)=>{
 
-        channel.subscribe((state) => {
+        console.log("Supabase:",status);
 
-            console.log("Supabase:", state);
+        if(status === "SUBSCRIBED"){
 
-            if (
-                state === "SUBSCRIBED" ||
-                state === "CHANNEL_ERROR" ||
-                state === "TIMED_OUT"
-            ) {
-                resolve(state);
-            }
+            console.log(
+                "CCTV Channel verbunden"
+            );
 
-        });
-
-    });
-
-    if (status !== "SUBSCRIBED") {
-        waitingText.textContent = "VERBINDUNG FEHLGESCHLAGEN";
-        return;
-    }
-
-    console.log("CCTV Channel verbunden");
-
-    requestStreamer();
-
-    setInterval(() => {
-
-        if (!isStreamer && !viewerConnected) {
             requestStreamer();
         }
 
-    }, 3000);
-}
-
-/* =========================================================
-   BROADCAST
-   ========================================================= */
-
-async function sendSignal(payload) {
-
-    if (!channel) return;
-
-    await channel.send({
-        type: "broadcast",
-        event: "signal",
-        payload
-    });
-}
-
-async function sendCommand(payload) {
-
-    if (!channel) return;
-
-    await channel.send({
-        type: "broadcast",
-        event: "command",
-        payload
     });
 }
 
 /* =========================================================
-   STREAMER ANFORDERN
-   ========================================================= */
+   SENDEN
+========================================================= */
 
-function requestStreamer() {
+async function sendSignal(payload){
 
-    if (isStreamer) return;
+    if(!channel)return;
+
+    await channel.send({
+        type:"broadcast",
+        event:"signal",
+        payload
+    });
+}
+
+async function sendCommand(payload){
+
+    if(!channel)return;
+
+    await channel.send({
+        type:"broadcast",
+        event:"command",
+        payload
+    });
+}
+
+/* =========================================================
+   STREAMER SUCHEN
+========================================================= */
+
+function requestStreamer(){
+
+    if(isStreamer)return;
 
     sendSignal({
-        type: "viewer-join",
+        type:"viewer-join",
         viewerId
     });
 }
 
 /* =========================================================
-   STREAM START
-   ========================================================= */
+   STREAM STARTEN
+========================================================= */
 
-startButton.addEventListener("click", async () => {
+startButton.addEventListener(
+    "click",
+    async ()=>{
 
-    try {
+        if(isStreamer)return;
 
-        stream = await navigator.mediaDevices.getDisplayMedia({
-            video: {
-                frameRate: {
-                    ideal: 30,
-                    max: 60
-                }
-            },
-            audio: false
-        });
+        try{
 
-        if (!stream) {
-            return;
-        }
+            stream =
+                await navigator.mediaDevices
+                .getDisplayMedia({
+                    video:{
+                        frameRate:{
+                            ideal:30,
+                            max:60
+                        }
+                    },
+                    audio:false
+                });
 
-        isStreamer = true;
+            if(!stream)return;
 
-        streamerSession = crypto.randomUUID();
+            isStreamer = true;
 
-        const videoTrack = stream.getVideoTracks()[0];
+            streamerSession =
+                crypto.randomUUID();
 
-        if (videoTrack) {
+            localVideo.srcObject =
+                stream;
 
-            videoTrack.addEventListener(
-                "ended",
-                () => {
+            localVideo.style.display =
+                "block";
 
-                    stopStreamer();
+            remoteVideo.style.display =
+                "none";
 
-                }
+            waiting.style.display =
+                "none";
+
+            startBox.style.display =
+                "none";
+
+            liveBadge.style.display =
+                "flex";
+
+            startButton.textContent =
+                "STREAM LÄUFT";
+
+            const track =
+                stream.getVideoTracks()[0];
+
+            if(track){
+
+                track.addEventListener(
+                    "ended",
+                    stopStreamer
+                );
+
+            }
+
+            await sendSignal({
+
+                type:"streamer-online",
+
+                sessionId:
+                    streamerSession
+
+            });
+
+            console.log(
+                "STREAMER ONLINE"
             );
 
+        }catch(error){
+
+            console.error(
+                "Bildschirmfreigabe:",
+                error
+            );
+
+            waiting.style.display =
+                "flex";
+
+            waitingText.textContent =
+                "STREAM IST OFFLINE";
+
         }
 
-        localVideo.srcObject = stream;
-
-        localVideo.style.display = "block";
-
-        waiting.style.display = "none";
-
-        startBox.style.display = "none";
-
-        liveBadge.style.display = "flex";
-
-        await sendSignal({
-            type: "streamer-online",
-            sessionId: streamerSession
-        });
-
-        console.log("STREAMER ONLINE");
-
-    } catch (error) {
-
-        console.error(error);
-
-        waiting.style.display = "flex";
-
-        waitingText.textContent =
-            "BILDSCHIRMFREIGABE ABGEBROCHEN";
-
     }
-
-});
+);
 
 /* =========================================================
    STREAM STOPPEN
-   ========================================================= */
+========================================================= */
 
-async function stopStreamer() {
+async function stopStreamer(){
 
-    if (!isStreamer) return;
+    if(!isStreamer)return;
 
     isStreamer = false;
 
-    for (const pc of streamerPeers.values()) {
-        try {
+    for(
+        const pc of streamerPeers.values()
+    ){
+
+        try{
             pc.close();
-        } catch {}
+        }catch{}
+
     }
 
     streamerPeers.clear();
 
-    if (stream) {
+    if(stream){
 
-        stream.getTracks().forEach(track => {
-            try {
-                track.stop();
-            } catch {}
-        });
+        stream.getTracks()
+            .forEach(track=>{
+                try{
+                    track.stop();
+                }catch{}
+            });
 
     }
 
@@ -482,13 +510,19 @@ async function stopStreamer() {
 
     liveBadge.style.display = "none";
 
-    waiting.style.display = "flex";
+    startBox.style.display = "block";
 
-    waitingText.textContent = "STREAM OFFLINE";
+    waiting.style.display = "flex";
+    waitingText.textContent =
+        "STREAM IST OFFLINE";
 
     await sendSignal({
-        type: "streamer-offline",
-        sessionId: streamerSession
+
+        type:"streamer-offline",
+
+        sessionId:
+            streamerSession
+
     });
 
     streamerSession = null;
@@ -496,21 +530,49 @@ async function stopStreamer() {
 
 /* =========================================================
    SIGNALING
-   ========================================================= */
+========================================================= */
 
-async function handleSignal(message) {
+async function handleSignal(message){
 
-    if (!message || !message.type) return;
+    if(!message || !message.type)return;
+
+    /* -----------------------------------------
+       STATUS-ANFRAGE VON REGIE
+    ----------------------------------------- */
+
+    if(
+        message.type === "status-request"
+    ){
+
+        if(isStreamer){
+
+            await sendSignal({
+
+                type:"streamer-status",
+
+                online:true,
+
+                sessionId:
+                    streamerSession
+
+            });
+
+        }
+
+        return;
+    }
 
     /* -----------------------------------------
        STREAMER
-       ----------------------------------------- */
+    ----------------------------------------- */
 
-    if (isStreamer) {
+    if(isStreamer){
 
-        if (message.type === "viewer-join") {
+        if(
+            message.type === "viewer-join"
+        ){
 
-            if (!message.viewerId) return;
+            if(!message.viewerId)return;
 
             await createViewerConnection(
                 message.viewerId
@@ -519,14 +581,18 @@ async function handleSignal(message) {
             return;
         }
 
-        if (message.type === "viewer-answer") {
+        if(
+            message.type === "viewer-answer"
+        ){
 
             const pc =
-                streamerPeers.get(message.viewerId);
+                streamerPeers.get(
+                    message.viewerId
+                );
 
-            if (!pc) return;
+            if(!pc)return;
 
-            try {
+            try{
 
                 await pc.setRemoteDescription(
                     new RTCSessionDescription(
@@ -534,7 +600,7 @@ async function handleSignal(message) {
                     )
                 );
 
-            } catch (error) {
+            }catch(error){
 
                 console.error(
                     "Answer Fehler:",
@@ -546,14 +612,21 @@ async function handleSignal(message) {
             return;
         }
 
-        if (message.type === "viewer-ice") {
+        if(
+            message.type === "viewer-ice"
+        ){
 
             const pc =
-                streamerPeers.get(message.viewerId);
+                streamerPeers.get(
+                    message.viewerId
+                );
 
-            if (!pc || !message.candidate) return;
+            if(
+                !pc ||
+                !message.candidate
+            )return;
 
-            try {
+            try{
 
                 await pc.addIceCandidate(
                     new RTCIceCandidate(
@@ -561,7 +634,7 @@ async function handleSignal(message) {
                     )
                 );
 
-            } catch (error) {
+            }catch(error){
 
                 console.error(
                     "ICE Fehler:",
@@ -578,56 +651,69 @@ async function handleSignal(message) {
 
     /* -----------------------------------------
        VIEWER
-       ----------------------------------------- */
+    ----------------------------------------- */
 
-    if (message.type === "streamer-online") {
-
-        streamerSession =
-            message.sessionId;
+    if(
+        message.type ===
+        "streamer-online"
+    ){
 
         requestStreamer();
-
         return;
     }
 
-    if (message.type === "streamer-offline") {
+    if(
+        message.type ===
+        "streamer-offline"
+    ){
 
         closeViewer();
 
-        waiting.style.display = "flex";
+        waiting.style.display =
+            "flex";
 
         waitingText.textContent =
-            "STREAM OFFLINE";
+            "STREAM IST OFFLINE";
+
+        liveBadge.style.display =
+            "none";
 
         return;
     }
 
-    if (message.type === "streamer-offer") {
+    if(
+        message.type ===
+        "streamer-offer"
+    ){
 
-        if (
+        if(
             message.targetViewerId !==
             viewerId
-        ) {
-            return;
-        }
+        )return;
 
-        await handleStreamerOffer(message);
+        await handleStreamerOffer(
+            message
+        );
 
         return;
     }
 
-    if (message.type === "streamer-ice") {
+    if(
+        message.type ===
+        "streamer-ice"
+    ){
 
-        if (
+        if(
             message.targetViewerId !==
             viewerId
-        ) {
-            return;
-        }
+        )return;
 
-        if (!viewerPeer) return;
+        if(
+            !viewerPeer ||
+            !message.candidate
+        )return;
 
-        try {
+        try{
 
             await viewerPeer.addIceCandidate(
                 new RTCIceCandidate(
@@ -635,7 +721,7 @@ async function handleSignal(message) {
                 )
             );
 
-        } catch (error) {
+        }catch(error){
 
             console.error(
                 "Viewer ICE:",
@@ -644,32 +730,31 @@ async function handleSignal(message) {
 
         }
 
-        return;
     }
+
 }
 
 /* =========================================================
    STREAMER → VIEWER
-   ========================================================= */
+========================================================= */
 
 async function createViewerConnection(
     targetViewerId
-) {
+){
 
-    if (!stream) return;
+    if(!stream)return;
 
     const old =
-        streamerPeers.get(targetViewerId);
-
-    if (old) {
-
-        try {
-            old.close();
-        } catch {}
-
-        streamerPeers.delete(
+        streamerPeers.get(
             targetViewerId
         );
+
+    if(old){
+
+        try{
+            old.close();
+        }catch{}
+
     }
 
     const pc =
@@ -682,60 +767,59 @@ async function createViewerConnection(
         pc
     );
 
-    /* Screen Track hinzufügen */
+    stream.getTracks()
+        .forEach(track=>{
 
-    stream.getTracks().forEach(track => {
-
-        pc.addTrack(
-            track,
-            stream
-        );
-
-    });
-
-    /* ICE */
-
-    pc.onicecandidate = event => {
-
-        if (!event.candidate) return;
-
-        sendSignal({
-
-            type: "streamer-ice",
-
-            targetViewerId,
-
-            candidate:
-                event.candidate.toJSON()
+            pc.addTrack(
+                track,
+                stream
+            );
 
         });
 
-    };
+    pc.onicecandidate =
+        event=>{
 
-    pc.onconnectionstatechange = () => {
+            if(!event.candidate)return;
 
-        console.log(
-            "Viewer",
-            targetViewerId,
-            pc.connectionState
-        );
+            sendSignal({
 
-        if (
-            pc.connectionState ===
-            "failed" ||
-            pc.connectionState ===
-            "closed"
-        ) {
+                type:"streamer-ice",
 
-            streamerPeers.delete(
-                targetViewerId
+                targetViewerId,
+
+                candidate:
+                    event.candidate.toJSON()
+
+            });
+
+        };
+
+    pc.onconnectionstatechange =
+        ()=>{
+
+            console.log(
+                "Viewer:",
+                targetViewerId,
+                pc.connectionState
             );
 
-        }
+            if(
+                pc.connectionState ===
+                "failed" ||
+                pc.connectionState ===
+                "closed"
+            ){
 
-    };
+                streamerPeers.delete(
+                    targetViewerId
+                );
 
-    try {
+            }
+
+        };
+
+    try{
 
         const offer =
             await pc.createOffer();
@@ -746,7 +830,7 @@ async function createViewerConnection(
 
         await sendSignal({
 
-            type: "streamer-offer",
+            type:"streamer-offer",
 
             targetViewerId,
 
@@ -758,7 +842,7 @@ async function createViewerConnection(
 
         });
 
-    } catch (error) {
+    }catch(error){
 
         console.error(
             "Offer Fehler:",
@@ -769,12 +853,12 @@ async function createViewerConnection(
 }
 
 /* =========================================================
-   VIEWER → STREAMER
-   ========================================================= */
+   VIEWER EMPFÄNGT STREAM
+========================================================= */
 
 async function handleStreamerOffer(
     message
-) {
+){
 
     closeViewer();
 
@@ -785,114 +869,113 @@ async function handleStreamerOffer(
 
     viewerPeer = pc;
 
-    pc.ontrack = event => {
+    pc.ontrack =
+        event=>{
 
-        if (
-            event.streams &&
-            event.streams[0]
-        ) {
+            let incomingStream;
+
+            if(
+                event.streams &&
+                event.streams[0]
+            ){
+
+                incomingStream =
+                    event.streams[0];
+
+            }else{
+
+                incomingStream =
+                    new MediaStream();
+
+                incomingStream.addTrack(
+                    event.track
+                );
+
+            }
 
             remoteVideo.srcObject =
-                event.streams[0];
+                incomingStream;
 
-        } else {
+            remoteVideo.style.display =
+                "block";
 
-            const newStream =
-                new MediaStream();
+            waiting.style.display =
+                "none";
 
-            newStream.addTrack(
-                event.track
-            );
-
-            remoteVideo.srcObject =
-                newStream;
-        }
-
-        remoteVideo.style.display =
-            "block";
-
-        waiting.style.display =
-            "none";
-
-        liveBadge.style.display =
-            "flex";
-
-        viewerConnected = true;
-
-        remoteVideo.play()
-            .catch(() => {});
-
-    };
-
-    pc.onicecandidate = event => {
-
-        if (!event.candidate) return;
-
-        sendSignal({
-
-            type: "viewer-ice",
-
-            viewerId,
-
-            candidate:
-                event.candidate.toJSON()
-
-        });
-
-    };
-
-    pc.onconnectionstatechange = () => {
-
-        console.log(
-            "Viewer connection:",
-            pc.connectionState
-        );
-
-        if (
-            pc.connectionState ===
-            "connected"
-        ) {
+            liveBadge.style.display =
+                "flex";
 
             viewerConnected = true;
 
-            waiting.style.display =
-                "none";
+            remoteVideo.play()
+                .catch(()=>{});
 
-        }
+        };
 
-        if (
-            pc.connectionState ===
-            "failed" ||
-            pc.connectionState ===
-            "disconnected" ||
-            pc.connectionState ===
-            "closed"
-        ) {
+    pc.onicecandidate =
+        event=>{
 
-            viewerConnected = false;
+            if(!event.candidate)return;
 
-            remoteVideo.srcObject =
-                null;
+            sendSignal({
 
-            remoteVideo.style.display =
-                "none";
+                type:"viewer-ice",
 
-            waiting.style.display =
-                "flex";
+                viewerId,
 
-            waitingText.textContent =
-                "VERBINDUNG WIRD HERGESTELLT...";
+                candidate:
+                    event.candidate.toJSON()
 
-            setTimeout(
-                requestStreamer,
-                1500
+            });
+
+        };
+
+    pc.onconnectionstatechange =
+        ()=>{
+
+            console.log(
+                "WebRTC:",
+                pc.connectionState
             );
 
-        }
+            if(
+                pc.connectionState ===
+                "connected"
+            ){
 
-    };
+                viewerConnected = true;
 
-    try {
+            }
+
+            if(
+                pc.connectionState ===
+                "failed" ||
+                pc.connectionState ===
+                "disconnected" ||
+                pc.connectionState ===
+                "closed"
+            ){
+
+                viewerConnected = false;
+
+                closeViewer();
+
+                waiting.style.display =
+                    "flex";
+
+                waitingText.textContent =
+                    "VERBINDUNG WIRD HERGESTELLT...";
+
+                setTimeout(
+                    requestStreamer,
+                    1500
+                );
+
+            }
+
+        };
+
+    try{
 
         await pc.setRemoteDescription(
             new RTCSessionDescription(
@@ -909,7 +992,7 @@ async function handleStreamerOffer(
 
         await sendSignal({
 
-            type: "viewer-answer",
+            type:"viewer-answer",
 
             viewerId,
 
@@ -918,7 +1001,7 @@ async function handleStreamerOffer(
 
         });
 
-    } catch (error) {
+    }catch(error){
 
         console.error(
             "WebRTC Fehler:",
@@ -927,28 +1010,26 @@ async function handleStreamerOffer(
 
         closeViewer();
 
-        waiting.style.display =
-            "flex";
-
         waitingText.textContent =
             "VERBINDUNG FEHLGESCHLAGEN";
 
     }
+
 }
 
 /* =========================================================
    VIEWER SCHLIESSEN
-   ========================================================= */
+========================================================= */
 
-function closeViewer() {
+function closeViewer(){
 
     viewerConnected = false;
 
-    if (viewerPeer) {
+    if(viewerPeer){
 
-        try {
+        try{
             viewerPeer.close();
-        } catch {}
+        }catch{}
 
     }
 
@@ -958,81 +1039,93 @@ function closeViewer() {
 
     remoteVideo.style.display =
         "none";
-
 }
 
 /* =========================================================
-   REGIE BEFEHLE
-   ========================================================= */
+   REGIE-BEFEHLE
+========================================================= */
 
-function handleCommand(command) {
+function handleCommand(command){
 
-    if (!command || isStreamer === false) {
-        return;
-    }
+    if(
+        !command ||
+        !isStreamer
+    )return;
 
-    if (command.type === "text") {
+    if(
+        command.type === "text"
+    ){
 
         showRegieText(
-            command.text || ""
+            command.text
         );
 
     }
 
-    if (command.type === "privacy") {
+    if(
+        command.type === "privacy"
+    ){
 
         showPrivacy();
 
     }
+
 }
 
 /* =========================================================
-   TEXT EINBLENDEN
-   ========================================================= */
+   TEXT
+========================================================= */
 
 let textTimer = null;
 
-function showRegieText(text) {
+function showRegieText(text){
 
-    if (!text) return;
+    if(!text)return;
 
     clearTimeout(textTimer);
 
-    regieText.textContent = text;
+    regieText.textContent =
+        text;
 
-    regieText.style.display = "block";
+    regieText.style.display =
+        "block";
 
-    textTimer = setTimeout(() => {
+    textTimer =
+        setTimeout(()=>{
 
-        regieText.style.display =
-            "none";
+            regieText.style.display =
+                "none";
 
-    }, 10000);
+        },10000);
+
 }
 
 /* =========================================================
    SICHTSCHUTZ
-   ========================================================= */
+========================================================= */
 
 let privacyTimer = null;
 
-function showPrivacy() {
+function showPrivacy(){
 
     clearTimeout(privacyTimer);
 
-    privacy.style.display = "flex";
+    privacy.style.display =
+        "flex";
 
-    privacyTimer = setTimeout(() => {
+    privacyTimer =
+        setTimeout(()=>{
 
-        privacy.style.display =
-            "none";
+            privacy.style.display =
+                "none";
 
-    }, 10000);
+        },10000);
+
 }
 
 /* =========================================================
    START
-   ========================================================= */
+========================================================= */
 
 connectChannel();
 

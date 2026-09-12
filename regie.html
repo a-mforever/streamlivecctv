@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CCTV Regie</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+
+      background: #080808;
+      color: white;
+
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      padding: 18px;
+    }
+
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+
+      margin: 0 auto;
+    }
+
+
+    /* HEADER */
+
+    .header {
+      background: #111;
+
+      border: 1px solid #292929;
+      border-radius: 12px;
+
+      padding: 18px;
+
+      margin-bottom: 15px;
+    }
+
+
+    .title {
+      font-size: 23px;
+      font-weight: 800;
+
+      margin-bottom: 8px;
+    }
+
+
+    .subtitle {
+      color: #888;
+      font-size: 13px;
+    }
+
+
+    /* STATUS */
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      margin-top: 15px;
+
+      color: #777;
+      font-size: 13px;
+    }
+
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+
+      border-radius: 50%;
+
+      background: #555;
+    }
+
+
+    .status.online {
+      color: #4bdd72;
+    }
+
+
+    .status.online .status-dot {
+      background: #25dc5b;
+
+      box-shadow:
+        0 0 9px rgba(37, 220, 91, .8);
+    }
+
+
+    /* BOX */
+
+    .box {
+      background: #111;
+
+      border: 1px solid #292929;
+      border-radius: 12px;
+
+      padding: 18px;
+
+      margin-bottom: 15px;
+    }
+
+
+    .box-title {
+      font-size: 15px;
+      font-weight: 800;
+
+      margin-bottom: 12px;
+    }
+
+
+    /* TEXT */
+
+    textarea {
+      width: 100%;
+
+      min-height: 110px;
+
+      resize: vertical;
+
+      padding: 13px;
+
+      background: #080808;
+
+      color: white;
+
+      border: 1px solid #333;
+      border-radius: 8px;
+
+      outline: none;
+
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+    }
+
+
+    textarea:focus {
+      border-color: #555;
+    }
+
+
+    /* BUTTON */
+
+    button {
+      width: 100%;
+
+      border: 0;
+
+      border-radius: 8px;
+
+      padding: 14px;
+
+      margin-top: 10px;
+
+      color: white;
+
+      background: #252525;
+
+      cursor: pointer;
+
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+
+    button:hover {
+      background: #333;
+    }
+
+
+    .send-button {
+      background: #14652b;
+    }
+
+
+    .send-button:hover {
+      background: #1b8038;
+    }
+
+
+    .privacy-button {
+      background: #711d1d;
+
+      font-size: 15px;
+    }
+
+
+    .privacy-button:hover {
+      background: #912323;
+    }
+
+
+    .privacy-button.active {
+      background: #a52828;
+    }
+
+
+    /* COUNTDOWN */
+
+    .countdown {
+      text-align: center;
+
+      margin-top: 13px;
+
+      color: #888;
+
+      font-size: 13px;
+    }
+
+
+    .countdown strong {
+      color: white;
+      font-size: 22px;
+    }
+
+
+    /* QUICK TEXT */
+
+    .quick-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 8px;
+    }
+
+
+    .quick-grid button {
+      margin-top: 0;
+    }
+
+
+    /* LOG */
+
+    .log {
+      color: #777;
+
+      font-size: 12px;
+      line-height: 1.6;
+
+      max-height: 130px;
+
+      overflow-y: auto;
+    }
+
+
+    .log-entry {
+      padding: 4px 0;
+
+      border-bottom:
+        1px solid #1d1d1d;
+    }
+
+
+    /* MOBILE */
+
+    @media (max-width: 450px) {
+
+      body {
+        padding: 10px;
+      }
+
+      .quick-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <div class="title">
+      CCTV REGIE
+    </div>
+
+    <div class="subtitle">
+      Steuerung für den Minecraft-Livestream
+    </div>
+
+
+    <div
+      class="status"
+      id="status"
+    >
+
+      <span class="status-dot"></span>
+
+      <span id="statusText">
+        Verbindung wird hergestellt...
+      </span>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- TEXT -->
+
+  <div class="box">
+
+    <div class="box-title">
+      TEXT EINBLENDEN
+    </div>
+
+
+    <textarea
+      id="textInput"
+      maxlength="250"
+      placeholder="Text für den Stream eingeben..."
+    ></textarea>
+
+
+    <button
+      class="send-button"
+      id="sendText"
+    >
+      TEXT FÜR 10 SEKUNDEN EINBLENDEN
+    </button>
+
+  </div>
+
+
+
+  <!-- SCHNELLTEXT -->
+
+  <div class="box">
+
+    <div class="box-title">
+      SCHNELLTEXTE
+    </div>
+
+
+    <div class="quick-grid">
+
+      <button
+        data-text="Wir sind gleich wieder da!"
+      >
+        GLEICH WIEDER DA
+      </button>
+
+
+      <button
+        data-text="Kurze Pause"
+      >
+        KURZE PAUSE
+      </button>
+
+
+      <button
+        data-text="Einen Moment bitte..."
+      >
+        EINEN MOMENT
+      </button>
+
+
+      <button
+        data-text="Der Stream geht gleich weiter."
+      >
+        STREAM GEHT WEITER
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- SICHTSCHUTZ -->
+
+  <div class="box">
+
+    <div class="box-title">
+      SICHTSCHUTZ
+    </div>
+
+
+    <button
+      class="privacy-button"
+      id="privacyButton"
+    >
+      STREAM SICHTSCHUTZ · 10 SEKUNDEN
+    </button>
+
+
+    <div
+      class="countdown"
+      id="countdown"
+    >
+      Bereit
+    </div>
+
+  </div>
+
+
+
+  <!-- LOG -->
+
+  <div class="box">
+
+    <div class="box-title">
+      REGIE-LOG
+    </div>
+
+
+    <div
+      class="log"
+      id="log"
+    >
+
+      <div class="log-entry">
+        Regie gestartet.
+      </div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+
+<script>
+
+  /*
+  ============================================================
+  CCTV REGIE
+  ============================================================
+
+  Diese Seite ist für dein Handy gedacht.
+
+  Sie soll später Befehle an index.html schicken:
+
+  TEXT
+  ↓
+  10 Sekunden auf Stream
+
+  SICHTSCHUTZ
+  ↓
+  10 Sekunden schwarzer Bildschirm
+  ↓
+  Warnsignal
+  ↓
+  "STREAM SICHTSCHUTZ"
+
+  ============================================================
+  */
+
+
+  const status =
+    document.getElementById("status");
+
+  const statusText =
+    document.getElementById("statusText");
+
+  const textInput =
+    document.getElementById("textInput");
+
+  const sendText =
+    document.getElementById("sendText");
+
+  const privacyButton =
+    document.getElementById("privacyButton");
+
+  const countdown =
+    document.getElementById("countdown");
+
+  const log =
+    document.getElementById("log");
+
+
+  /*
+  ============================================================
+  LOG
+  ============================================================
+  */
+
+  function addLog(text) {
+
+    const entry =
+      document.createElement("div");
+
+    entry.className =
+      "log-entry";
+
+    const time =
+      new Date().toLocaleTimeString(
+        "de-DE",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        }
+      );
+
+    entry.textContent =
+      "[" + time + "] " + text;
+
+    log.prepend(entry);
+
+  }
+
+
+
+  /*
+  ============================================================
+  STATUS
+  ============================================================
+  */
+
+  function setOnline() {
+
+    status.classList.add(
+      "online"
+    );
+
+    statusText.textContent =
+      "Regie verbunden";
+
+  }
+
+
+
+  function setOffline() {
+
+    status.classList.remove(
+      "online"
+    );
+
+    statusText.textContent =
+      "Keine Verbindung";
+
+  }
+
+
+
+  /*
+  ============================================================
+  SEND COMMAND
+  ============================================================
+  */
+
+  function sendCommand(
+    command
+  ) {
+
+    /*
+      HIER kommt später die echte
+      Realtime-Verbindung rein.
+
+      Zum Beispiel:
+
+      realtime.send(command)
+
+    */
+
+    console.log(
+      "REGIE COMMAND:",
+      command
+    );
+
+  }
+
+
+
+  /*
+  ============================================================
+  TEXT SENDEN
+  ============================================================
+  */
+
+  sendText.addEventListener(
+    "click",
+    () => {
+
+      const text =
+        textInput.value.trim();
+
+
+      if (!text) {
+
+        textInput.focus();
+
+        return;
+
+      }
+
+
+      sendCommand({
+
+        type: "text",
+
+        text: text,
+
+        duration: 10000
+
+      });
+
+
+      addLog(
+        'Text eingeblendet: "' +
+        text +
+        '"'
+      );
+
+
+      textInput.value = "";
+
+    }
+  );
+
+
+
+  /*
+  ============================================================
+  SCHNELLTEXTE
+  ============================================================
+  */
+
+  document
+    .querySelectorAll(
+      "[data-text]"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const text =
+              button.dataset.text;
+
+
+            sendCommand({
+
+              type: "text",
+
+              text: text,
+
+              duration: 10000
+
+            });
+
+
+            addLog(
+              'Schnelltext: "' +
+              text +
+              '"'
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+
+  /*
+  ============================================================
+  SICHTSCHUTZ
+  ============================================================
+  */
+
+  privacyButton.addEventListener(
+    "click",
+    () => {
+
+      /*
+      -----------------------------------------------
+      Befehl an Stream senden
+      -----------------------------------------------
+      */
+
+      sendCommand({
+
+        type: "privacy",
+
+        duration: 10000
+
+      });
+
+
+      privacyButton.disabled =
+        true;
+
+      privacyButton.classList.add(
+        "active"
+      );
+
+
+      addLog(
+        "Sichtschutz für 10 Sekunden aktiviert."
+      );
+
+
+      /*
+      -----------------------------------------------
+      COUNTDOWN
+      -----------------------------------------------
+      */
+
+      let seconds =
+        10;
+
+
+      countdown.innerHTML =
+        "Sichtschutz aktiv<br>" +
+        "<strong>" +
+        seconds +
+        "</strong>";
+
+
+      const timer =
+        setInterval(
+          () => {
+
+            seconds--;
+
+
+            if (seconds <= 0) {
+
+              clearInterval(
+                timer
+              );
+
+
+              countdown.textContent =
+                "Sichtschutz beendet";
+
+
+              privacyButton.disabled =
+                false;
+
+
+              privacyButton.classList.remove(
+                "active"
+              );
+
+
+              return;
+
+            }
+
+
+            countdown.innerHTML =
+              "Sichtschutz aktiv<br>" +
+              "<strong>" +
+              seconds +
+              "</strong>";
+
+          },
+          1000
+        );
+
+    }
+  );
+
+
+
+  /*
+  ============================================================
+  TESTSTATUS
+  ============================================================
+  */
+
+  /*
+    Für den ersten UI-Test setzen wir die Regie
+    auf verbunden.
+
+    Die echte Realtime-Verbindung kommt als nächster
+    technischer Teil.
+  */
+
+  setTimeout(
+    () => {
+
+      setOnline();
+
+      addLog(
+        "Regie bereit."
+      );
+
+    },
+    500
+  );
+
+</script>
+
+</body>
+</html>

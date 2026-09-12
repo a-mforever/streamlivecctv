@@ -1,523 +1,1042 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>CCTV LIVE</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body {
-      position: relative;
-    }
-
-    /* ================================
-       STREAM
-    ================================= */
-
-    #video {
-      position: fixed;
-      inset: 0;
-
-      width: 100vw;
-      height: 100vh;
-
-      object-fit: contain;
-
-      background: #000;
-    }
-
-
-    /* ================================
-       CCTV / LIVE OVERLAY
-    ================================= */
-
-    #overlay {
-      position: fixed;
-
-      top: 20px;
-      left: 20px;
-
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      padding: 9px 12px;
-
-      background: rgba(5, 5, 5, 0.82);
-
-      border: 1px solid rgba(32, 217, 91, 0.45);
-
-      border-radius: 7px;
-
-      color: white;
-
-      font-size: 14px;
-      font-weight: 800;
-
-      letter-spacing: 0.3px;
-
-      z-index: 10;
-
-      user-select: none;
-      pointer-events: none;
-    }
-
-
-    /* grüner CCTV-Punkt */
-
-    #cctvDot {
-      width: 10px;
-      height: 10px;
-
-      border-radius: 50%;
-
-      background: #20d95b;
-
-      box-shadow:
-        0 0 8px rgba(32, 217, 91, 0.9);
-    }
-
-
-    /* LIVE */
-
-    #liveBadge {
-      padding: 5px 8px;
-
-      background: #e83232;
-
-      border-radius: 5px;
-
-      font-size: 12px;
-      font-weight: 900;
-
-      color: white;
-    }
-
-
-    /* ================================
-       OFFLINE / WARTEN
-    ================================= */
-
-    #waiting {
-      position: fixed;
-
-      inset: 0;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #000;
-
-      z-index: 5;
-    }
-
-
-    #waitingBox {
-      text-align: center;
-
-      padding: 25px 30px;
-
-      background: #101010;
-
-      border: 1px solid #292929;
-
-      border-radius: 10px;
-
-      color: white;
-    }
-
-
-    #waitingTitle {
-      font-size: 21px;
-      font-weight: 700;
-
-      margin-bottom: 8px;
-    }
-
-
-    #waitingText {
-      color: #888;
-
-      font-size: 13px;
-    }
-
-
-    /* ================================
-       LADEKREIS
-    ================================= */
-
-    #loader {
-      width: 32px;
-      height: 32px;
-
-      margin: 0 auto 17px;
-
-      border: 4px solid #292929;
-
-      border-top-color: #20d95b;
-
-      border-radius: 50%;
-
-      animation: spin 0.8s linear infinite;
-    }
-
-
-    @keyframes spin {
-
-      from {
-        transform: rotate(0deg);
-      }
-
-      to {
-        transform: rotate(360deg);
-      }
-
-    }
-
-
-    /* ================================
-       STREAM STARTEN
-    ================================= */
-
-    #startButton {
-      position: fixed;
-
-      left: 50%;
-      bottom: 30px;
-
-      transform: translateX(-50%);
-
-      z-index: 20;
-
-      padding: 11px 18px;
-
-      background: #151515;
-
-      color: white;
-
-      border: 1px solid #333;
-
-      border-radius: 7px;
-
-      cursor: pointer;
-
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-
-    #startButton:hover {
-      background: #242424;
-    }
-
-
-    /* ================================
-       MOBILE
-    ================================= */
-
-    @media (max-width: 600px) {
-
-      #overlay {
-        top: 10px;
-        left: 10px;
-
-        padding: 7px 9px;
-
-        font-size: 12px;
-      }
-
-      #liveBadge {
-        font-size: 11px;
-
-        padding: 4px 6px;
-      }
-
-    }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCTV Stream</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+#app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+}
+
+#remoteVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    display: none;
+}
+
+#localVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    display: none;
+}
+
+#waiting {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #000;
+    color: white;
+    z-index: 5;
+}
+
+#waiting .signal {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #e00000;
+    box-shadow: 0 0 18px #e00000;
+    margin-bottom: 18px;
+}
+
+#waitingText {
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: #ddd;
+}
+
+#startBox {
+    position: absolute;
+    left: 50%;
+    bottom: 35px;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: none;
+}
+
+button {
+    border: 1px solid rgba(255,255,255,.35);
+    background: rgba(15,15,15,.85);
+    color: white;
+    padding: 13px 22px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: rgba(50,50,50,.95);
+}
+
+#liveBadge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 15;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 12px;
+    letter-spacing: 2px;
+    background: rgba(0,0,0,.55);
+    padding: 7px 10px;
+    border-radius: 3px;
+}
+
+#liveDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e00000;
+    box-shadow: 0 0 10px #e00000;
+}
+
+#privacy {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: #000;
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#privacySignal {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e00000;
+    box-shadow: 0 0 30px #e00000;
+    animation: blink .7s infinite alternate;
+    margin-bottom: 24px;
+}
+
+#privacyTitle {
+    font-size: 25px;
+    letter-spacing: 5px;
+}
+
+#privacySub {
+    margin-top: 12px;
+    color: #888;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+#regieText {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 40;
+    max-width: 85%;
+    color: white;
+    font-size: clamp(25px, 5vw, 75px);
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 0 3px 15px rgba(0,0,0,.9);
+    display: none;
+}
+
+@keyframes blink {
+    from { opacity: .35; }
+    to { opacity: 1; }
+}
+</style>
 </head>
-
 
 <body>
 
+<div id="app">
 
-  <!-- =================================
-       MINECRAFT VIDEO
-  ================================== -->
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay muted playsinline></video>
 
-  <video
-    id="video"
-    autoplay
-    playsinline
-    muted
-  ></video>
-
-
-  <!-- =================================
-       CCTV / LIVE
-  ================================== -->
-
-  <div id="overlay">
-
-    <span id="cctvDot"></span>
-
-    <span>CCTV</span>
-
-    <span id="liveBadge">
-      LIVE
-    </span>
-
-  </div>
-
-
-  <!-- =================================
-       WARTEN
-  ================================== -->
-
-  <div id="waiting">
-
-    <div id="waitingBox">
-
-      <div id="loader"></div>
-
-      <div id="waitingTitle">
-        Minecraft LIVE
-      </div>
-
-      <div id="waitingText">
-        Warte auf den Stream...
-      </div>
-
+    <div id="waiting">
+        <div class="signal"></div>
+        <div id="waitingText">STREAM WIRD GELADEN...</div>
     </div>
 
-  </div>
+    <div id="startBox">
+        <button id="startButton">STREAM STARTEN</button>
+    </div>
 
+    <div id="liveBadge">
+        <span id="liveDot"></span>
+        <span>LIVE</span>
+    </div>
 
-  <!-- =================================
-       STREAM STARTEN
-       NUR FÜR DEN STREAMER
-  ================================== -->
+    <div id="regieText"></div>
 
-  <button id="startButton">
-    STREAM STARTEN
-  </button>
+    <div id="privacy">
+        <div id="privacySignal"></div>
+        <div id="privacyTitle">STREAM SICHTSCHUTZ</div>
+        <div id="privacySub">ÜBERTRAGUNG VORÜBERGEHEND AUSGEBLENDET</div>
+    </div>
 
+</div>
 
-  <script>
+<script>
+/* =========================================================
+   SUPABASE
+   ========================================================= */
 
-    /*
-    ============================================================
-    MINECRAFT CCTV LIVE
-    ============================================================
+const SUPABASE_URL = "https://zxaczahnnnztcglsinej.supabase.co";
 
-    KEIN AUDIO
+const SUPABASE_KEY =
+    "sb_publishable_K9b2XabV1bJz9oCj7W6eaQ_AtBeXzm4";
 
-    Es wird ausschließlich Video übertragen.
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-    Der Bildschirm wird mit getDisplayMedia()
-    aufgenommen.
+/* =========================================================
+   EINSTELLUNGEN
+   ========================================================= */
 
-    ============================================================
-    */
+const ROOM = "cctv-live-stream";
 
+const rtcConfig = {
+    iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" }
+    ]
+};
 
-    const video =
-      document.getElementById("video");
+/* =========================================================
+   ELEMENTE
+   ========================================================= */
 
-    const waiting =
-      document.getElementById("waiting");
+const remoteVideo = document.getElementById("remoteVideo");
+const localVideo = document.getElementById("localVideo");
+const waiting = document.getElementById("waiting");
+const waitingText = document.getElementById("waitingText");
+const startBox = document.getElementById("startBox");
+const startButton = document.getElementById("startButton");
+const liveBadge = document.getElementById("liveBadge");
+const regieText = document.getElementById("regieText");
+const privacy = document.getElementById("privacy");
 
-    const startButton =
-      document.getElementById("startButton");
+/* =========================================================
+   STATUS
+   ========================================================= */
 
-    const overlay =
-      document.getElementById("overlay");
+let channel = null;
 
+let isStreamer = false;
+let stream = null;
+let streamerSession = null;
 
-    let stream = null;
+let viewerId =
+    "viewer-" +
+    crypto.randomUUID();
 
+let viewerPeer = null;
+let viewerConnected = false;
 
-    /*
-    ============================================================
-    STREAM STARTEN
-    ============================================================
-    */
+const streamerPeers = new Map();
 
-    startButton.addEventListener(
-      "click",
-      async () => {
+/* =========================================================
+   SUPABASE CHANNEL
+   ========================================================= */
 
-        try {
+async function connectChannel() {
 
-          /*
-          ---------------------------------------------
-          Bildschirm auswählen
-          ---------------------------------------------
-
-          WICHTIG:
-
-          audio: false
-
-          Dadurch wird KEIN Ton aufgenommen.
-          */
-
-          stream =
-            await navigator.mediaDevices
-              .getDisplayMedia({
-
-                video: {
-                  frameRate: {
-                    ideal: 30,
-                    max: 60
-                  }
-                },
-
-                audio: false
-
-              });
-
-
-          /*
-          ---------------------------------------------
-          VIDEO ANZEIGEN
-          ---------------------------------------------
-          */
-
-          video.srcObject =
-            stream;
-
-
-          video.muted =
-            true;
-
-
-          await video.play();
-
-
-          /*
-          ---------------------------------------------
-          WARTEN-BILDSCHIRM AUSBLENDEN
-          ---------------------------------------------
-          */
-
-          waiting.style.display =
-            "none";
-
-
-          /*
-          ---------------------------------------------
-          STARTBUTTON AUSBLENDEN
-          ---------------------------------------------
-          */
-
-          startButton.style.display =
-            "none";
-
-
-          /*
-          ---------------------------------------------
-          STREAM ENDE
-          ---------------------------------------------
-          */
-
-          const track =
-            stream.getVideoTracks()[0];
-
-
-          if (track) {
-
-            track.addEventListener(
-              "ended",
-              stopStream
-            );
-
-          }
-
+    channel = supabaseClient.channel(ROOM, {
+        config: {
+            broadcast: {
+                self: false
+            }
         }
+    });
 
-        catch (error) {
-
-          console.error(
-            "Stream konnte nicht gestartet werden:",
-            error
-          );
-
+    channel.on(
+        "broadcast",
+        { event: "signal" },
+        ({ payload }) => {
+            handleSignal(payload);
         }
-
-      }
     );
 
+    channel.on(
+        "broadcast",
+        { event: "command" },
+        ({ payload }) => {
+            handleCommand(payload);
+        }
+    );
 
-    /*
-    ============================================================
-    STREAM STOPPEN
-    ============================================================
-    */
+    const status = await new Promise((resolve) => {
 
-    function stopStream() {
+        channel.subscribe((state) => {
 
-      if (stream) {
+            console.log("Supabase:", state);
 
-        stream
-          .getTracks()
-          .forEach(
-            track => track.stop()
-          );
+            if (
+                state === "SUBSCRIBED" ||
+                state === "CHANNEL_ERROR" ||
+                state === "TIMED_OUT"
+            ) {
+                resolve(state);
+            }
 
-        stream =
-          null;
+        });
 
-      }
+    });
 
+    if (status !== "SUBSCRIBED") {
+        waitingText.textContent = "VERBINDUNG FEHLGESCHLAGEN";
+        return;
+    }
 
-      video.srcObject =
-        null;
+    console.log("CCTV Channel verbunden");
 
+    requestStreamer();
 
-      waiting.style.display =
-        "flex";
+    setInterval(() => {
 
+        if (!isStreamer && !viewerConnected) {
+            requestStreamer();
+        }
 
-      startButton.style.display =
-        "block";
+    }, 3000);
+}
+
+/* =========================================================
+   BROADCAST
+   ========================================================= */
+
+async function sendSignal(payload) {
+
+    if (!channel) return;
+
+    await channel.send({
+        type: "broadcast",
+        event: "signal",
+        payload
+    });
+}
+
+async function sendCommand(payload) {
+
+    if (!channel) return;
+
+    await channel.send({
+        type: "broadcast",
+        event: "command",
+        payload
+    });
+}
+
+/* =========================================================
+   STREAMER ANFORDERN
+   ========================================================= */
+
+function requestStreamer() {
+
+    if (isStreamer) return;
+
+    sendSignal({
+        type: "viewer-join",
+        viewerId
+    });
+}
+
+/* =========================================================
+   STREAM START
+   ========================================================= */
+
+startButton.addEventListener("click", async () => {
+
+    try {
+
+        stream = await navigator.mediaDevices.getDisplayMedia({
+            video: {
+                frameRate: {
+                    ideal: 30,
+                    max: 60
+                }
+            },
+            audio: false
+        });
+
+        if (!stream) {
+            return;
+        }
+
+        isStreamer = true;
+
+        streamerSession = crypto.randomUUID();
+
+        const videoTrack = stream.getVideoTracks()[0];
+
+        if (videoTrack) {
+
+            videoTrack.addEventListener(
+                "ended",
+                () => {
+
+                    stopStreamer();
+
+                }
+            );
+
+        }
+
+        localVideo.srcObject = stream;
+
+        localVideo.style.display = "block";
+
+        waiting.style.display = "none";
+
+        startBox.style.display = "none";
+
+        liveBadge.style.display = "flex";
+
+        await sendSignal({
+            type: "streamer-online",
+            sessionId: streamerSession
+        });
+
+        console.log("STREAMER ONLINE");
+
+    } catch (error) {
+
+        console.error(error);
+
+        waiting.style.display = "flex";
+
+        waitingText.textContent =
+            "BILDSCHIRMFREIGABE ABGEBROCHEN";
 
     }
 
+});
 
-    /*
-    ============================================================
-    WICHTIG
-    ============================================================
+/* =========================================================
+   STREAM STOPPEN
+   ========================================================= */
 
-    Aktuell wird das Minecraft-Bild lokal im Browser
-    angezeigt.
+async function stopStreamer() {
 
-    Für die echte Übertragung an andere Besucher muss
-    der MediaStream noch über WebRTC weitergereicht werden.
+    if (!isStreamer) return;
 
-    Das kommt als nächster Teil.
+    isStreamer = false;
 
-    ============================================================
-    */
+    for (const pc of streamerPeers.values()) {
+        try {
+            pc.close();
+        } catch {}
+    }
 
-  </script>
+    streamerPeers.clear();
+
+    if (stream) {
+
+        stream.getTracks().forEach(track => {
+            try {
+                track.stop();
+            } catch {}
+        });
+
+    }
+
+    stream = null;
+
+    localVideo.srcObject = null;
+    localVideo.style.display = "none";
+
+    liveBadge.style.display = "none";
+
+    waiting.style.display = "flex";
+
+    waitingText.textContent = "STREAM OFFLINE";
+
+    await sendSignal({
+        type: "streamer-offline",
+        sessionId: streamerSession
+    });
+
+    streamerSession = null;
+}
+
+/* =========================================================
+   SIGNALING
+   ========================================================= */
+
+async function handleSignal(message) {
+
+    if (!message || !message.type) return;
+
+    /* -----------------------------------------
+       STREAMER
+       ----------------------------------------- */
+
+    if (isStreamer) {
+
+        if (message.type === "viewer-join") {
+
+            if (!message.viewerId) return;
+
+            await createViewerConnection(
+                message.viewerId
+            );
+
+            return;
+        }
+
+        if (message.type === "viewer-answer") {
+
+            const pc =
+                streamerPeers.get(message.viewerId);
+
+            if (!pc) return;
+
+            try {
+
+                await pc.setRemoteDescription(
+                    new RTCSessionDescription(
+                        message.answer
+                    )
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Answer Fehler:",
+                    error
+                );
+
+            }
+
+            return;
+        }
+
+        if (message.type === "viewer-ice") {
+
+            const pc =
+                streamerPeers.get(message.viewerId);
+
+            if (!pc || !message.candidate) return;
+
+            try {
+
+                await pc.addIceCandidate(
+                    new RTCIceCandidate(
+                        message.candidate
+                    )
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "ICE Fehler:",
+                    error
+                );
+
+            }
+
+            return;
+        }
+
+        return;
+    }
+
+    /* -----------------------------------------
+       VIEWER
+       ----------------------------------------- */
+
+    if (message.type === "streamer-online") {
+
+        streamerSession =
+            message.sessionId;
+
+        requestStreamer();
+
+        return;
+    }
+
+    if (message.type === "streamer-offline") {
+
+        closeViewer();
+
+        waiting.style.display = "flex";
+
+        waitingText.textContent =
+            "STREAM OFFLINE";
+
+        return;
+    }
+
+    if (message.type === "streamer-offer") {
+
+        if (
+            message.targetViewerId !==
+            viewerId
+        ) {
+            return;
+        }
+
+        await handleStreamerOffer(message);
+
+        return;
+    }
+
+    if (message.type === "streamer-ice") {
+
+        if (
+            message.targetViewerId !==
+            viewerId
+        ) {
+            return;
+        }
+
+        if (!viewerPeer) return;
+
+        try {
+
+            await viewerPeer.addIceCandidate(
+                new RTCIceCandidate(
+                    message.candidate
+                )
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Viewer ICE:",
+                error
+            );
+
+        }
+
+        return;
+    }
+}
+
+/* =========================================================
+   STREAMER → VIEWER
+   ========================================================= */
+
+async function createViewerConnection(
+    targetViewerId
+) {
+
+    if (!stream) return;
+
+    const old =
+        streamerPeers.get(targetViewerId);
+
+    if (old) {
+
+        try {
+            old.close();
+        } catch {}
+
+        streamerPeers.delete(
+            targetViewerId
+        );
+    }
+
+    const pc =
+        new RTCPeerConnection(
+            rtcConfig
+        );
+
+    streamerPeers.set(
+        targetViewerId,
+        pc
+    );
+
+    /* Screen Track hinzufügen */
+
+    stream.getTracks().forEach(track => {
+
+        pc.addTrack(
+            track,
+            stream
+        );
+
+    });
+
+    /* ICE */
+
+    pc.onicecandidate = event => {
+
+        if (!event.candidate) return;
+
+        sendSignal({
+
+            type: "streamer-ice",
+
+            targetViewerId,
+
+            candidate:
+                event.candidate.toJSON()
+
+        });
+
+    };
+
+    pc.onconnectionstatechange = () => {
+
+        console.log(
+            "Viewer",
+            targetViewerId,
+            pc.connectionState
+        );
+
+        if (
+            pc.connectionState ===
+            "failed" ||
+            pc.connectionState ===
+            "closed"
+        ) {
+
+            streamerPeers.delete(
+                targetViewerId
+            );
+
+        }
+
+    };
+
+    try {
+
+        const offer =
+            await pc.createOffer();
+
+        await pc.setLocalDescription(
+            offer
+        );
+
+        await sendSignal({
+
+            type: "streamer-offer",
+
+            targetViewerId,
+
+            sessionId:
+                streamerSession,
+
+            offer:
+                pc.localDescription.toJSON()
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Offer Fehler:",
+            error
+        );
+
+    }
+}
+
+/* =========================================================
+   VIEWER → STREAMER
+   ========================================================= */
+
+async function handleStreamerOffer(
+    message
+) {
+
+    closeViewer();
+
+    const pc =
+        new RTCPeerConnection(
+            rtcConfig
+        );
+
+    viewerPeer = pc;
+
+    pc.ontrack = event => {
+
+        if (
+            event.streams &&
+            event.streams[0]
+        ) {
+
+            remoteVideo.srcObject =
+                event.streams[0];
+
+        } else {
+
+            const newStream =
+                new MediaStream();
+
+            newStream.addTrack(
+                event.track
+            );
+
+            remoteVideo.srcObject =
+                newStream;
+        }
+
+        remoteVideo.style.display =
+            "block";
+
+        waiting.style.display =
+            "none";
+
+        liveBadge.style.display =
+            "flex";
+
+        viewerConnected = true;
+
+        remoteVideo.play()
+            .catch(() => {});
+
+    };
+
+    pc.onicecandidate = event => {
+
+        if (!event.candidate) return;
+
+        sendSignal({
+
+            type: "viewer-ice",
+
+            viewerId,
+
+            candidate:
+                event.candidate.toJSON()
+
+        });
+
+    };
+
+    pc.onconnectionstatechange = () => {
+
+        console.log(
+            "Viewer connection:",
+            pc.connectionState
+        );
+
+        if (
+            pc.connectionState ===
+            "connected"
+        ) {
+
+            viewerConnected = true;
+
+            waiting.style.display =
+                "none";
+
+        }
+
+        if (
+            pc.connectionState ===
+            "failed" ||
+            pc.connectionState ===
+            "disconnected" ||
+            pc.connectionState ===
+            "closed"
+        ) {
+
+            viewerConnected = false;
+
+            remoteVideo.srcObject =
+                null;
+
+            remoteVideo.style.display =
+                "none";
+
+            waiting.style.display =
+                "flex";
+
+            waitingText.textContent =
+                "VERBINDUNG WIRD HERGESTELLT...";
+
+            setTimeout(
+                requestStreamer,
+                1500
+            );
+
+        }
+
+    };
+
+    try {
+
+        await pc.setRemoteDescription(
+            new RTCSessionDescription(
+                message.offer
+            )
+        );
+
+        const answer =
+            await pc.createAnswer();
+
+        await pc.setLocalDescription(
+            answer
+        );
+
+        await sendSignal({
+
+            type: "viewer-answer",
+
+            viewerId,
+
+            answer:
+                pc.localDescription.toJSON()
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "WebRTC Fehler:",
+            error
+        );
+
+        closeViewer();
+
+        waiting.style.display =
+            "flex";
+
+        waitingText.textContent =
+            "VERBINDUNG FEHLGESCHLAGEN";
+
+    }
+}
+
+/* =========================================================
+   VIEWER SCHLIESSEN
+   ========================================================= */
+
+function closeViewer() {
+
+    viewerConnected = false;
+
+    if (viewerPeer) {
+
+        try {
+            viewerPeer.close();
+        } catch {}
+
+    }
+
+    viewerPeer = null;
+
+    remoteVideo.srcObject = null;
+
+    remoteVideo.style.display =
+        "none";
+
+}
+
+/* =========================================================
+   REGIE BEFEHLE
+   ========================================================= */
+
+function handleCommand(command) {
+
+    if (!command || isStreamer === false) {
+        return;
+    }
+
+    if (command.type === "text") {
+
+        showRegieText(
+            command.text || ""
+        );
+
+    }
+
+    if (command.type === "privacy") {
+
+        showPrivacy();
+
+    }
+}
+
+/* =========================================================
+   TEXT EINBLENDEN
+   ========================================================= */
+
+let textTimer = null;
+
+function showRegieText(text) {
+
+    if (!text) return;
+
+    clearTimeout(textTimer);
+
+    regieText.textContent = text;
+
+    regieText.style.display = "block";
+
+    textTimer = setTimeout(() => {
+
+        regieText.style.display =
+            "none";
+
+    }, 10000);
+}
+
+/* =========================================================
+   SICHTSCHUTZ
+   ========================================================= */
+
+let privacyTimer = null;
+
+function showPrivacy() {
+
+    clearTimeout(privacyTimer);
+
+    privacy.style.display = "flex";
+
+    privacyTimer = setTimeout(() => {
+
+        privacy.style.display =
+            "none";
+
+    }, 10000);
+}
+
+/* =========================================================
+   START
+   ========================================================= */
+
+connectChannel();
+
+</script>
 
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Minecraft LIVE</title>
+  <title>CCTV LIVE</title>
 
   <style>
     * {
@@ -14,396 +14,241 @@
     html,
     body {
       margin: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
-      background: #050505;
-      color: white;
-      font-family: Arial, Helvetica, sans-serif;
+      background: #000;
       overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     body {
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    header {
-      height: 58px;
-      min-height: 58px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 18px;
-
-      background: #0b0b0b;
-      border-bottom: 1px solid #252525;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .brand-icon {
-      width: 30px;
-      height: 30px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #67a64b 0%,
-          #67a64b 48%,
-          #4c4c4c 49%,
-          #4c4c4c 100%
-        );
-
-      border: 2px solid #242424;
-    }
-
-    /* =========================
-       CCTV / LIVE
-    ========================= */
-
-    .live-panel {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-
-      background: #101010;
-      border: 1px solid #293329;
-      border-radius: 8px;
-
-      padding: 7px 10px;
-    }
-
-    .cctv {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .green-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-
-      background: #555;
-    }
-
-    .live-panel.active .green-dot {
-      background: #20d95b;
-      box-shadow: 0 0 9px rgba(32, 217, 91, .75);
-    }
-
-    .live-badge {
-      background: #e83232;
-      color: white;
-
-      padding: 5px 8px;
-      border-radius: 6px;
-
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    /* =========================
-       MAIN STREAM
-    ========================= */
-
-    main {
-      flex: 1;
-      min-height: 0;
-
       position: relative;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #000;
     }
 
-    .stream-wrapper {
-      position: relative;
+    /* ================================
+       STREAM
+    ================================= */
 
-      width: 100%;
-      height: 100%;
+    #video {
+      position: fixed;
+      inset: 0;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #000;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
 
       object-fit: contain;
 
       background: #000;
     }
 
-    /* =========================
-       CCTV OVERLAY
-    ========================= */
 
-    .stream-overlay {
-      position: absolute;
-      top: 18px;
-      left: 18px;
+    /* ================================
+       CCTV / LIVE OVERLAY
+    ================================= */
+
+    #overlay {
+      position: fixed;
+
+      top: 20px;
+      left: 20px;
 
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
 
-      padding: 8px 11px;
+      padding: 9px 12px;
 
-      background: rgba(5, 15, 8, .88);
-      border: 1px solid rgba(32, 217, 91, .35);
+      background: rgba(5, 5, 5, 0.82);
+
+      border: 1px solid rgba(32, 217, 91, 0.45);
+
       border-radius: 7px;
+
+      color: white;
 
       font-size: 14px;
       font-weight: 800;
 
+      letter-spacing: 0.3px;
+
+      z-index: 10;
+
+      user-select: none;
       pointer-events: none;
     }
 
-    .stream-overlay .dot {
+
+    /* grüner CCTV-Punkt */
+
+    #cctvDot {
       width: 10px;
       height: 10px;
+
       border-radius: 50%;
 
-      background: #555;
-    }
-
-    .stream-overlay.live .dot {
       background: #20d95b;
-      box-shadow: 0 0 10px rgba(32, 217, 91, .8);
+
+      box-shadow:
+        0 0 8px rgba(32, 217, 91, 0.9);
     }
 
-    .stream-overlay .live {
+
+    /* LIVE */
+
+    #liveBadge {
+      padding: 5px 8px;
+
       background: #e83232;
 
-      padding: 5px 8px;
       border-radius: 5px;
 
       font-size: 12px;
+      font-weight: 900;
+
+      color: white;
     }
 
-    /* =========================
-       WAITING
-    ========================= */
 
-    .waiting {
-      position: absolute;
+    /* ================================
+       OFFLINE / WARTEN
+    ================================= */
+
+    #waiting {
+      position: fixed;
+
       inset: 0;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
-      background: #050505;
+      background: #000;
+
+      z-index: 5;
     }
 
-    .waiting-box {
+
+    #waitingBox {
       text-align: center;
 
-      padding: 30px 35px;
-
-      border: 1px solid #292929;
-      border-radius: 12px;
+      padding: 25px 30px;
 
       background: #101010;
+
+      border: 1px solid #292929;
+
+      border-radius: 10px;
+
+      color: white;
     }
 
-    .waiting-title {
-      font-size: 22px;
+
+    #waitingTitle {
+      font-size: 21px;
       font-weight: 700;
-      margin-bottom: 9px;
+
+      margin-bottom: 8px;
     }
 
-    .waiting-text {
+
+    #waitingText {
       color: #888;
-      font-size: 14px;
+
+      font-size: 13px;
     }
 
-    .loader {
-      width: 34px;
-      height: 34px;
 
-      margin: 0 auto 18px;
+    /* ================================
+       LADEKREIS
+    ================================= */
+
+    #loader {
+      width: 32px;
+      height: 32px;
+
+      margin: 0 auto 17px;
 
       border: 4px solid #292929;
+
       border-top-color: #20d95b;
 
       border-radius: 50%;
 
-      animation: spin .8s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
+
     @keyframes spin {
+
+      from {
+        transform: rotate(0deg);
+      }
+
       to {
         transform: rotate(360deg);
       }
+
     }
 
-    /* =========================
-       CONTROL BAR
-    ========================= */
 
-    .controls {
-      position: absolute;
+    /* ================================
+       STREAM STARTEN
+    ================================= */
 
-      left: 0;
-      right: 0;
-      bottom: 0;
+    #startButton {
+      position: fixed;
 
-      padding: 18px;
+      left: 50%;
+      bottom: 30px;
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      transform: translateX(-50%);
 
-      background:
-        linear-gradient(
-          to top,
-          rgba(0,0,0,.95),
-          rgba(0,0,0,0)
-        );
+      z-index: 20;
 
-      opacity: 0;
+      padding: 11px 18px;
 
-      transition: opacity .2s;
-    }
-
-    .stream-wrapper:hover .controls {
-      opacity: 1;
-    }
-
-    .left-controls,
-    .right-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    button {
-      border: 1px solid #363636;
-      background: rgba(18,18,18,.95);
+      background: #151515;
 
       color: white;
 
-      border-radius: 7px;
+      border: 1px solid #333;
 
-      padding: 9px 13px;
+      border-radius: 7px;
 
       cursor: pointer;
 
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    button:hover {
-      background: #262626;
-      border-color: #555;
+
+    #startButton:hover {
+      background: #242424;
     }
 
-    button.stream-button {
-      border-color: #1d8d3d;
-      background: #116126;
-    }
 
-    button.stream-button:hover {
-      background: #168033;
-    }
-
-    button.stop-button {
-      border-color: #8c2525;
-      background: #631818;
-    }
-
-    .status {
-      color: #777;
-      font-size: 12px;
-      margin-left: 4px;
-    }
-
-    .status.online {
-      color: #35d965;
-    }
-
-    .status.error {
-      color: #ff5555;
-    }
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    footer {
-      height: 32px;
-      min-height: 32px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #0b0b0b;
-      border-top: 1px solid #222;
-
-      color: #666;
-      font-size: 11px;
-    }
-
-    /* =========================
+    /* ================================
        MOBILE
-    ========================= */
+    ================================= */
 
-    @media (max-width: 700px) {
+    @media (max-width: 600px) {
 
-      header {
-        height: 52px;
-        min-height: 52px;
-        padding: 0 12px;
-      }
-
-      .brand {
-        font-size: 16px;
-      }
-
-      .brand-icon {
-        width: 27px;
-        height: 27px;
-      }
-
-      .stream-overlay {
+      #overlay {
         top: 10px;
         left: 10px;
+
+        padding: 7px 9px;
+
+        font-size: 12px;
       }
 
-      .controls {
-        padding: 10px;
+      #liveBadge {
+        font-size: 11px;
+
+        padding: 4px 6px;
       }
 
-      footer {
-        height: 28px;
-        min-height: 28px;
-      }
     }
 
   </style>
@@ -412,184 +257,82 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================= -->
 
-  <header>
+  <!-- =================================
+       MINECRAFT VIDEO
+  ================================== -->
 
-    <div class="brand">
-      <div class="brand-icon"></div>
-      <span>Minecraft LIVE</span>
-    </div>
+  <video
+    id="video"
+    autoplay
+    playsinline
+    muted
+  ></video>
 
-    <div
-      class="live-panel"
-      id="livePanel"
-    >
 
-      <div class="cctv">
+  <!-- =================================
+       CCTV / LIVE
+  ================================== -->
 
-        <span class="green-dot"></span>
+  <div id="overlay">
 
-        <span>CCTV</span>
+    <span id="cctvDot"></span>
 
+    <span>CCTV</span>
+
+    <span id="liveBadge">
+      LIVE
+    </span>
+
+  </div>
+
+
+  <!-- =================================
+       WARTEN
+  ================================== -->
+
+  <div id="waiting">
+
+    <div id="waitingBox">
+
+      <div id="loader"></div>
+
+      <div id="waitingTitle">
+        Minecraft LIVE
       </div>
 
-      <div class="live-badge">
-        LIVE
-      </div>
-
-    </div>
-
-  </header>
-
-
-  <!-- =========================
-       STREAM
-  ========================= -->
-
-  <main>
-
-    <div
-      class="stream-wrapper"
-      id="streamWrapper"
-    >
-
-      <video
-        id="video"
-        autoplay
-        playsinline
-        muted
-      ></video>
-
-
-      <!-- CCTV OVERLAY -->
-
-      <div
-        class="stream-overlay"
-        id="streamOverlay"
-      >
-
-        <span class="dot"></span>
-
-        <span>CCTV</span>
-
-        <span class="live">
-          LIVE
-        </span>
-
-      </div>
-
-
-      <!-- WAITING -->
-
-      <div
-        class="waiting"
-        id="waiting"
-      >
-
-        <div class="waiting-box">
-
-          <div class="loader"></div>
-
-          <div class="waiting-title">
-            Minecraft LIVE
-          </div>
-
-          <div
-            class="waiting-text"
-            id="waitingText"
-          >
-            Warte auf den Minecraft-Stream...
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- CONTROLS -->
-
-      <div class="controls">
-
-        <div class="left-controls">
-
-          <button
-            id="streamButton"
-            class="stream-button"
-          >
-            STREAM STARTEN
-          </button>
-
-          <button
-            id="stopButton"
-            class="stop-button"
-            style="display:none;"
-          >
-            STREAM STOPPEN
-          </button>
-
-          <span
-            class="status"
-            id="status"
-          >
-            Bereit
-          </span>
-
-        </div>
-
-
-        <div class="right-controls">
-
-          <button id="soundButton">
-            🔇 Ton
-          </button>
-
-          <button id="fullscreenButton">
-            ⛶ Vollbild
-          </button>
-
-        </div>
-
+      <div id="waitingText">
+        Warte auf den Stream...
       </div>
 
     </div>
 
-  </main>
+  </div>
 
 
-  <footer>
-    Minecraft LIVE
-  </footer>
+  <!-- =================================
+       STREAM STARTEN
+       NUR FÜR DEN STREAMER
+  ================================== -->
 
-
-  <!-- =========================
-       PEERJS
-  ========================= -->
-
-  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <button id="startButton">
+    STREAM STARTEN
+  </button>
 
 
   <script>
 
     /*
     ============================================================
-    MINECRAFT LIVE
+    MINECRAFT CCTV LIVE
     ============================================================
 
-    Diese EINE Seite kann jetzt:
+    KEIN AUDIO
 
-    1. STREAMER sein
-    2. ZUSCHAUER sein
+    Es wird ausschließlich Video übertragen.
 
-    Es gibt keine sender.html mehr.
-
-    Auf deinem Minecraft-PC:
-        STREAM STARTEN
-
-    Auf einem anderen Gerät:
-        gleiche Website öffnen
+    Der Bildschirm wird mit getDisplayMedia()
+    aufgenommen.
 
     ============================================================
     */
@@ -601,225 +344,14 @@
     const waiting =
       document.getElementById("waiting");
 
-    const waitingText =
-      document.getElementById("waitingText");
+    const startButton =
+      document.getElementById("startButton");
 
-    const streamButton =
-      document.getElementById("streamButton");
+    const overlay =
+      document.getElementById("overlay");
 
-    const stopButton =
-      document.getElementById("stopButton");
 
-    const status =
-      document.getElementById("status");
-
-    const soundButton =
-      document.getElementById("soundButton");
-
-    const fullscreenButton =
-      document.getElementById("fullscreenButton");
-
-    const streamWrapper =
-      document.getElementById("streamWrapper");
-
-    const livePanel =
-      document.getElementById("livePanel");
-
-    const streamOverlay =
-      document.getElementById("streamOverlay");
-
-
-    /*
-    ============================================================
-    PEER
-    ============================================================
-    */
-
-    let peer = null;
-
-    let localStream = null;
-
-    let isBroadcaster = false;
-
-    let broadcasterId = null;
-
-    let activeCalls = [];
-
-
-    /*
-    ============================================================
-    STATUS
-    ============================================================
-    */
-
-    function setStatus(
-      text,
-      type = ""
-    ) {
-
-      status.textContent = text;
-
-      status.className =
-        "status " + type;
-
-    }
-
-
-    /*
-    ============================================================
-    LIVE UI
-    ============================================================
-    */
-
-    function setLive(
-      live
-    ) {
-
-      if (live) {
-
-        livePanel.classList.add(
-          "active"
-        );
-
-        streamOverlay.classList.add(
-          "live"
-        );
-
-        waiting.style.display =
-          "none";
-
-      } else {
-
-        livePanel.classList.remove(
-          "active"
-        );
-
-        streamOverlay.classList.remove(
-          "live"
-        );
-
-        waiting.style.display =
-          "flex";
-
-      }
-
-    }
-
-
-    /*
-    ============================================================
-    PEER INITIALISIEREN
-    ============================================================
-    */
-
-    function createPeer() {
-
-      return new Promise(
-        (resolve, reject) => {
-
-          peer = new Peer();
-
-          peer.on(
-            "open",
-            id => {
-
-              console.log(
-                "Peer-ID:",
-                id
-              );
-
-              resolve(id);
-
-            }
-          );
-
-
-          peer.on(
-            "error",
-            error => {
-
-              console.error(
-                "PeerJS Fehler:",
-                error
-              );
-
-              setStatus(
-                "Verbindungsfehler",
-                "error"
-              );
-
-              reject(error);
-
-            }
-          );
-
-
-          /*
-          --------------------------------------------------
-          EINGEHENDER ANRUF
-          --------------------------------------------------
-          */
-
-          peer.on(
-            "call",
-            call => {
-
-              /*
-                Wenn wir Zuschauer sind,
-                beantworten wir den Anruf
-                des Streamers.
-              */
-
-              if (!localStream) {
-
-                call.answer();
-
-                call.on(
-                  "stream",
-                  remoteStream => {
-
-                    video.srcObject =
-                      remoteStream;
-
-                    video.muted =
-                      false;
-
-                    setLive(true);
-
-                    setStatus(
-                      "LIVE",
-                      "online"
-                    );
-
-                  }
-                );
-
-
-                call.on(
-                  "close",
-                  () => {
-
-                    video.srcObject =
-                      null;
-
-                    setLive(false);
-
-                    setStatus(
-                      "Stream beendet"
-                    );
-
-                  }
-                );
-
-              }
-
-            }
-          );
-
-        }
-      );
-
-    }
+    let stream = null;
 
 
     /*
@@ -828,449 +360,109 @@
     ============================================================
     */
 
-    streamButton.addEventListener(
+    startButton.addEventListener(
       "click",
-      startStream
-    );
+      async () => {
 
+        try {
 
-    async function startStream() {
+          /*
+          ---------------------------------------------
+          Bildschirm auswählen
+          ---------------------------------------------
 
-      try {
+          WICHTIG:
 
-        streamButton.disabled =
-          true;
+          audio: false
 
-        setStatus(
-          "Verbinde..."
-        );
+          Dadurch wird KEIN Ton aufgenommen.
+          */
 
+          stream =
+            await navigator.mediaDevices
+              .getDisplayMedia({
 
-        /*
-        -----------------------------------------------
-        PEER ERSTELLEN
-        -----------------------------------------------
-        */
+                video: {
+                  frameRate: {
+                    ideal: 30,
+                    max: 60
+                  }
+                },
 
-        if (!peer) {
+                audio: false
 
-          await createPeer();
-
-        }
-
-
-        /*
-        -----------------------------------------------
-        BILDSCHIRM AUFNEHMEN
-        -----------------------------------------------
-        */
-
-        setStatus(
-          "Wähle deinen Bildschirm..."
-        );
-
-
-        localStream =
-          await navigator.mediaDevices
-            .getDisplayMedia({
-
-              video: {
-                frameRate: {
-                  ideal: 30,
-                  max: 60
-                }
-              },
-
-              audio: true
-
-            });
-
-
-        /*
-        -----------------------------------------------
-        LOKALE VORSCHAU
-        -----------------------------------------------
-        */
-
-        video.srcObject =
-          localStream;
-
-        video.muted =
-          true;
-
-        await video.play();
-
-
-        isBroadcaster =
-          true;
-
-
-        /*
-        -----------------------------------------------
-        UI
-        -----------------------------------------------
-        */
-
-        setLive(true);
-
-        setStatus(
-          "LIVE",
-          "online"
-        );
-
-        streamButton.style.display =
-          "none";
-
-        stopButton.style.display =
-          "inline-block";
-
-
-        /*
-        -----------------------------------------------
-        ENDE DER BILDSCHIRMFREIGABE
-        -----------------------------------------------
-        */
-
-        const track =
-          localStream.getVideoTracks()[0];
-
-        if (track) {
-
-          track.addEventListener(
-            "ended",
-            stopStream
-          );
-
-        }
-
-
-        /*
-        -----------------------------------------------
-        WICHTIG
-        -----------------------------------------------
-
-        Andere Besucher müssen deine
-        Peer-ID kennen.
-
-        Wir veröffentlichen sie deshalb
-        in der URL.
-
-        Beispiel:
-
-        ?stream=abc123
-
-        -----------------------------------------------
-        */
-
-        const url =
-          new URL(
-            window.location.href
-          );
-
-        url.searchParams.set(
-          "stream",
-          peer.id
-        );
-
-        window.history.replaceState(
-          {},
-          "",
-          url
-        );
-
-
-        /*
-        -----------------------------------------------
-        NEUE ZUSCHAUER
-        -----------------------------------------------
-        */
-
-        waitForViewerConnections();
-
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-        streamButton.disabled =
-          false;
-
-        setStatus(
-          "Stream konnte nicht gestartet werden",
-          "error"
-        );
-
-      }
-
-    }
-
-
-    /*
-    ============================================================
-    ZUSCHAUER VERBINDEN
-    ============================================================
-    */
-
-    function connectToBroadcaster(
-      id
-    ) {
-
-      if (!id) {
-        return;
-      }
-
-
-      if (!peer) {
-
-        createPeer()
-          .then(() => {
-
-            makeCall(id);
-
-          });
-
-      } else {
-
-        makeCall(id);
-
-      }
-
-    }
-
-
-    function makeCall(
-      id
-    ) {
-
-      if (!peer) {
-        return;
-      }
-
-      if (!peer.open) {
-        return;
-      }
-
-
-      setStatus(
-        "Verbinde mit Minecraft..."
-      );
-
-
-      /*
-      -----------------------------------------------
-      VIDEOANRUF
-      -----------------------------------------------
-      */
-
-      const call =
-        peer.call(
-          id,
-          null
-        );
-
-
-      /*
-        PeerJS braucht für einen Call
-        einen MediaStream.
-
-        Für Zuschauer müssen wir deshalb
-        einen leeren Stream bereitstellen.
-      */
-
-      const emptyStream =
-        createEmptyStream();
-
-
-      /*
-        Call erneut mit Stream starten
-      */
-
-      if (call) {
-
-        call.close();
-
-      }
-
-
-      const realCall =
-        peer.call(
-          id,
-          emptyStream
-        );
-
-
-      activeCalls.push(
-        realCall
-      );
-
-
-      realCall.on(
-        "stream",
-        remoteStream => {
-
-          video.srcObject =
-            remoteStream;
-
-          video.muted =
-            false;
-
-          setLive(true);
-
-          setStatus(
-            "LIVE",
-            "online"
-          );
-
-        }
-      );
-
-
-      realCall.on(
-        "close",
-        () => {
-
-          video.srcObject =
-            null;
-
-          setLive(false);
-
-          setStatus(
-            "Stream beendet"
-          );
-
-        }
-      );
-
-
-      realCall.on(
-        "error",
-        error => {
-
-          console.error(
-            error
-          );
-
-          setStatus(
-            "Verbindung fehlgeschlagen",
-            "error"
-          );
-
-        }
-      );
-
-    }
-
-
-    /*
-    ============================================================
-    LEERER STREAM
-    ============================================================
-    */
-
-    function createEmptyStream() {
-
-      const canvas =
-        document.createElement(
-          "canvas"
-        );
-
-      canvas.width = 1;
-      canvas.height = 1;
-
-
-      const context =
-        canvas.getContext(
-          "2d"
-        );
-
-      context.fillStyle =
-        "black";
-
-      context.fillRect(
-        0,
-        0,
-        1,
-        1
-      );
-
-
-      const stream =
-        canvas.captureStream(
-          1
-        );
-
-
-      return stream;
-
-    }
-
-
-    /*
-    ============================================================
-    STREAM AN ZUSCHAUER SENDEN
-    ============================================================
-    */
-
-    function waitForViewerConnections() {
-
-      if (!peer) {
-        return;
-      }
-
-
-      peer.on(
-        "call",
-        call => {
-
-          if (!isBroadcaster) {
-            return;
-          }
-
-
-          if (!localStream) {
-            return;
-          }
+              });
 
 
           /*
-          Stream an Zuschauer senden
+          ---------------------------------------------
+          VIDEO ANZEIGEN
+          ---------------------------------------------
           */
 
-          call.answer(
-            localStream
-          );
+          video.srcObject =
+            stream;
 
 
-          activeCalls.push(
-            call
-          );
+          video.muted =
+            true;
 
 
-          setStatus(
-            "LIVE",
-            "online"
-          );
+          await video.play();
 
 
-          call.on(
-            "close",
-            () => {
+          /*
+          ---------------------------------------------
+          WARTEN-BILDSCHIRM AUSBLENDEN
+          ---------------------------------------------
+          */
 
-              activeCalls =
-                activeCalls.filter(
-                  item =>
-                    item !== call
-                );
+          waiting.style.display =
+            "none";
 
-            }
+
+          /*
+          ---------------------------------------------
+          STARTBUTTON AUSBLENDEN
+          ---------------------------------------------
+          */
+
+          startButton.style.display =
+            "none";
+
+
+          /*
+          ---------------------------------------------
+          STREAM ENDE
+          ---------------------------------------------
+          */
+
+          const track =
+            stream.getVideoTracks()[0];
+
+
+          if (track) {
+
+            track.addEventListener(
+              "ended",
+              stopStream
+            );
+
+          }
+
+        }
+
+        catch (error) {
+
+          console.error(
+            "Stream konnte nicht gestartet werden:",
+            error
           );
 
         }
-      );
 
-    }
+      }
+    );
 
 
     /*
@@ -1279,242 +471,51 @@
     ============================================================
     */
 
-    stopButton.addEventListener(
-      "click",
-      stopStream
-    );
-
-
     function stopStream() {
 
-      if (localStream) {
+      if (stream) {
 
-        localStream
+        stream
           .getTracks()
           .forEach(
-            track =>
-              track.stop()
+            track => track.stop()
           );
 
-        localStream =
+        stream =
           null;
 
       }
-
-
-      activeCalls.forEach(
-        call => {
-
-          try {
-            call.close();
-          } catch (e) {}
-
-        }
-      );
-
-
-      activeCalls =
-        [];
 
 
       video.srcObject =
         null;
 
 
-      isBroadcaster =
-        false;
+      waiting.style.display =
+        "flex";
 
 
-      setLive(false);
-
-      setStatus(
-        "Stream gestoppt"
-      );
-
-
-      streamButton.style.display =
-        "inline-block";
-
-      streamButton.disabled =
-        false;
-
-      stopButton.style.display =
-        "none";
-
-
-      /*
-      URL wieder sauber machen
-      */
-
-      const url =
-        new URL(
-          window.location.href
-        );
-
-      url.searchParams.delete(
-        "stream"
-      );
-
-      window.history.replaceState(
-        {},
-        "",
-        url
-      );
+      startButton.style.display =
+        "block";
 
     }
 
 
     /*
     ============================================================
-    TON
+    WICHTIG
+    ============================================================
+
+    Aktuell wird das Minecraft-Bild lokal im Browser
+    angezeigt.
+
+    Für die echte Übertragung an andere Besucher muss
+    der MediaStream noch über WebRTC weitergereicht werden.
+
+    Das kommt als nächster Teil.
+
     ============================================================
     */
-
-    soundButton.addEventListener(
-      "click",
-      () => {
-
-        video.muted =
-          !video.muted;
-
-
-        if (video.muted) {
-
-          soundButton.textContent =
-            "🔇 Ton";
-
-        } else {
-
-          soundButton.textContent =
-            "🔊 Ton";
-
-        }
-
-      }
-    );
-
-
-    /*
-    ============================================================
-    VOLLBILD
-    ============================================================
-    */
-
-    fullscreenButton.addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          if (
-            !document.fullscreenElement
-          ) {
-
-            await streamWrapper
-              .requestFullscreen();
-
-            fullscreenButton.textContent =
-              "✕ Vollbild";
-
-          } else {
-
-            await document
-              .exitFullscreen();
-
-            fullscreenButton.textContent =
-              "⛶ Vollbild";
-
-          }
-
-        } catch (error) {
-
-          console.error(
-            error
-          );
-
-        }
-
-      }
-    );
-
-
-    /*
-    ============================================================
-    URL PRÜFEN
-    ============================================================
-    */
-
-    async function initialize() {
-
-      setLive(false);
-
-
-      const url =
-        new URL(
-          window.location.href
-        );
-
-
-      broadcasterId =
-        url.searchParams.get(
-          "stream"
-        );
-
-
-      /*
-      -----------------------------------------------
-      PEER STARTEN
-      -----------------------------------------------
-      */
-
-      try {
-
-        await createPeer();
-
-
-        /*
-        -----------------------------------------------
-        Wenn ?stream= vorhanden ist,
-        sind wir Zuschauer.
-        -----------------------------------------------
-        */
-
-        if (
-          broadcasterId &&
-          broadcasterId !== peer.id
-        ) {
-
-          connectToBroadcaster(
-            broadcasterId
-          );
-
-        } else {
-
-          setStatus(
-            "Bereit zum Streamen"
-          );
-
-        }
-
-      } catch (error) {
-
-        setStatus(
-          "Verbindung zum Stream-Dienst fehlgeschlagen",
-          "error"
-        );
-
-      }
-
-    }
-
-
-    /*
-    ============================================================
-    START
-    ============================================================
-    */
-
-    initialize();
 
   </script>
 

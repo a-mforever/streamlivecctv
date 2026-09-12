@@ -1,1157 +1,789 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
 
-<title>OBSERVER</title>
+  <title>Minecraft LIVE</title>
 
-<style>
-* {
-    box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
-}
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #080808;
+      color: white;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
 
-body {
-    display: flex;
-    flex-direction: column;
-}
+    body {
+      display: flex;
+      flex-direction: column;
+    }
 
-/* ==============================
-   AUGE
-============================== */
+    /* HEADER */
 
-#observer {
-    height: 180px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
+    header {
+      height: 64px;
+      min-height: 64px;
+      background: #111111;
+      border-bottom: 1px solid #292929;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      z-index: 10;
+    }
 
-#eye {
-    width: 150px;
-    height: 85px;
-    border: 4px solid white;
-    border-radius: 50%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 700;
+    }
 
-#pupil {
-    width: 42px;
-    height: 42px;
-    background: white;
-    border-radius: 50%;
-}
+    .minecraft-icon {
+      width: 34px;
+      height: 34px;
+      background:
+        linear-gradient(135deg, #5b8c3a 0%, #6fa849 48%, #777 49%, #777 100%);
+      border: 2px solid #222;
+      box-shadow: inset 0 -8px 0 rgba(0,0,0,0.18);
+    }
 
-#eye.blink #pupil {
-    opacity: 0;
-}
+    .live-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #191919;
+      border: 1px solid #303030;
+      border-radius: 7px;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-#eye.blink::before,
-#eye.blink::after {
-    content: "";
-    position: absolute;
-    left: -5px;
-    width: calc(100% + 10px);
-    height: 52%;
-    background: #000;
-    z-index: 5;
-}
+    .live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #555;
+    }
 
-#eye.blink::before {
-    top: -5px;
-}
+    .live-status.live .live-dot {
+      background: #ff3030;
+      box-shadow: 0 0 10px rgba(255, 48, 48, 0.8);
+      animation: pulse 1.4s infinite;
+    }
 
-#eye.blink::after {
-    bottom: -5px;
-}
+    .live-status.live .live-text {
+      color: #ff4a4a;
+    }
 
-#observerName {
-    margin-top: 10px;
-    font-size: 12px;
-    letter-spacing: 5px;
-    opacity: .6;
-}
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
 
-#morse {
-    margin-top: 5px;
-    height: 15px;
-    font-size: 10px;
-    letter-spacing: 3px;
-    opacity: .45;
-}
+      50% {
+        opacity: 0.45;
+      }
+    }
 
-/* ==============================
-   CHAT
-============================== */
+    /* MAIN */
 
-#chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
-}
+    main {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, #181818 0%, #0b0b0b 55%, #050505 100%);
+    }
 
-.message {
-    margin-bottom: 18px;
-}
+    /* VIDEO */
 
-.label {
-    font-size: 10px;
-    letter-spacing: 2px;
-    opacity: .45;
-    margin-bottom: 5px;
-}
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050505;
+    }
 
-.text {
-    font-size: 16px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-}
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #050505;
+      display: block;
+    }
 
-/* ==============================
-   EINGABE
-============================== */
+    /* PLACEHOLDER */
 
-#inputArea {
-    display: flex;
-    gap: 8px;
-    padding: 10px;
-    border-top: 1px solid #222;
-}
+    .waiting {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
 
-#input {
-    flex: 1;
-    min-width: 0;
-    height: 48px;
-    border-radius: 25px;
-    border: 1px solid #444;
-    background: #111;
-    color: white;
-    padding: 0 15px;
-    font-size: 16px;
-    outline: none;
-}
+    .waiting-box {
+      width: min(90%, 520px);
+      text-align: center;
+      padding: 35px 30px;
+      background: rgba(17, 17, 17, 0.92);
+      border: 1px solid #303030;
+      border-radius: 12px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.55);
+    }
 
-.button {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid #444;
-    background: #111;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-}
+    .waiting-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
 
-.button:active {
-    transform: scale(.94);
-}
+    .waiting-text {
+      color: #999;
+      font-size: 15px;
+      line-height: 1.5;
+    }
 
-#mic.active {
-    background: white;
-    color: black;
-}
+    .loading {
+      width: 38px;
+      height: 38px;
+      margin: 0 auto 20px;
+      border: 4px solid #333;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
 
-#status {
-    position: fixed;
-    bottom: 75px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    letter-spacing: 2px;
-    opacity: 0;
-}
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-#status.active {
-    opacity: .6;
-}
-</style>
+    /* CONTROLS */
+
+    .controls {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 14px 18px;
+
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.92),
+        rgba(0, 0, 0, 0)
+      );
+
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .video-container:hover .controls,
+    .controls.visible {
+      opacity: 1;
+    }
+
+    .control-left,
+    .control-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid #383838;
+      background: rgba(25, 25, 25, 0.95);
+      color: white;
+      border-radius: 7px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    button:hover {
+      background: #292929;
+      border-color: #555;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .connection {
+      font-size: 12px;
+      color: #888;
+      margin-left: 6px;
+    }
+
+    .connection.connected {
+      color: #55d66b;
+    }
+
+    .connection.error {
+      color: #ff5252;
+    }
+
+    /* FOOTER */
+
+    footer {
+      height: 42px;
+      min-height: 42px;
+      background: #111111;
+      border-top: 1px solid #292929;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #777;
+      font-size: 12px;
+    }
+
+    /* FULLSCREEN */
+
+    :fullscreen .video-container {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+      header {
+        height: 56px;
+        min-height: 56px;
+        padding: 0 14px;
+      }
+
+      .logo {
+        font-size: 17px;
+      }
+
+      .minecraft-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .live-status {
+        padding: 7px 9px;
+      }
+
+      footer {
+        height: 36px;
+        min-height: 36px;
+      }
+
+      .waiting-box {
+        padding: 28px 20px;
+      }
+
+      .waiting-title {
+        font-size: 21px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- ==============================
-     OBSERVER AUGE
-============================== -->
-
-<div id="observer">
-
-    <div id="eye">
-        <div id="pupil"></div>
+  <header>
+    <div class="logo">
+      <div class="minecraft-icon"></div>
+      <span>Minecraft LIVE</span>
     </div>
 
-    <div id="observerName">
-        OBSERVER
+    <div class="live-status" id="liveStatus">
+      <span class="live-dot"></span>
+      <span class="live-text" id="liveText">OFFLINE</span>
+    </div>
+  </header>
+
+
+  <main>
+
+    <div
+      class="video-container"
+      id="videoContainer"
+    >
+
+      <!--
+        HIER KOMMT SPÄTER DER ECHTE MINECRAFT-STREAM REIN.
+        Der PC-Streamer liefert den MediaStream an dieses Video-Element.
+      -->
+
+      <video
+        id="liveVideo"
+        autoplay
+        playsinline
+        muted
+      ></video>
+
+
+      <div
+        class="waiting"
+        id="waiting"
+      >
+        <div class="waiting-box">
+
+          <div class="loading"></div>
+
+          <div class="waiting-title">
+            Minecraft LIVE
+          </div>
+
+          <div class="waiting-text" id="waitingText">
+            Warte auf die Verbindung zu deinem Minecraft-Stream...
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="controls" id="controls">
+
+        <div class="control-left">
+
+          <button id="playButton">
+            ▶ Start
+          </button>
+
+          <button id="muteButton">
+            🔇 Ton
+          </button>
+
+          <span
+            class="connection"
+            id="connectionStatus"
+          >
+            Verbindung wird hergestellt...
+          </span>
+
+        </div>
+
+
+        <div class="control-right">
+
+          <button id="fullscreenButton">
+            ⛶ Vollbild
+          </button>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <div id="morse"></div>
+  </main>
 
-</div>
 
+  <footer>
+    Minecraft LIVE · Web Stream
+  </footer>
 
-<!-- ==============================
-     CHAT
-============================== -->
 
-<div id="chat"></div>
+  <script>
+    /*
+      ============================================================
+      MINECRAFT LIVE WEB PLAYER
+      ============================================================
 
+      Der eigentliche WebRTC-Streamer wird im nächsten Schritt
+      angeschlossen.
 
-<!-- ==============================
-     EINGABE
-============================== -->
+      Aktuell:
+      - Video Player vorhanden
+      - LIVE/OFFLINE Status vorhanden
+      - Vollbild vorhanden
+      - Tonsteuerung vorhanden
+      - Verbindungsstatus vorhanden
+      - Wartebild vorhanden
+    */
 
-<div id="inputArea">
 
-    <button
-        class="button"
-        id="mic"
-        title="Mikrofon"
-    >
-        🎤
-    </button>
+    const video = document.getElementById("liveVideo");
+    const waiting = document.getElementById("waiting");
+    const waitingText = document.getElementById("waitingText");
 
-    <input
-        id="input"
-        type="text"
-        placeholder="Nachricht..."
-        autocomplete="off"
-    >
+    const liveStatus = document.getElementById("liveStatus");
+    const liveText = document.getElementById("liveText");
 
-    <button
-        class="button"
-        id="send"
-        title="Senden"
-    >
-        ➤
-    </button>
+    const connectionStatus =
+      document.getElementById("connectionStatus");
 
-</div>
+    const playButton =
+      document.getElementById("playButton");
 
-<div id="status">
-    ICH HÖRE ZU
-</div>
+    const muteButton =
+      document.getElementById("muteButton");
 
+    const fullscreenButton =
+      document.getElementById("fullscreenButton");
 
-<script>
+    const videoContainer =
+      document.getElementById("videoContainer");
 
-/* =================================================
-   ELEMENTE
-================================================= */
+    const controls =
+      document.getElementById("controls");
 
-const chat =
-    document.getElementById("chat");
 
-const input =
-    document.getElementById("input");
+    /*
+      ------------------------------------------------------------
+      LIVE STATUS
+      ------------------------------------------------------------
+    */
 
-const send =
-    document.getElementById("send");
+    function setLive(isLive) {
 
-const mic =
-    document.getElementById("mic");
+      if (isLive) {
 
-const status =
-    document.getElementById("status");
+        liveStatus.classList.add("live");
+        liveText.textContent = "LIVE";
 
-const eye =
-    document.getElementById("eye");
+        waiting.style.display = "none";
 
-const morse =
-    document.getElementById("morse");
+        connectionStatus.textContent =
+          "Verbunden";
 
+        connectionStatus.className =
+          "connection connected";
 
-/* =================================================
-   CHAT
-================================================= */
+      } else {
 
-function addMessage(
-    sender,
-    message
-) {
+        liveStatus.classList.remove("live");
+        liveText.textContent = "OFFLINE";
 
-    const wrapper =
-        document.createElement("div");
+        waiting.style.display = "flex";
 
-    wrapper.className =
-        "message";
+        connectionStatus.textContent =
+          "Offline";
 
-    const label =
-        document.createElement("div");
+        connectionStatus.className =
+          "connection";
 
-    label.className =
-        "label";
-
-    label.textContent =
-        sender;
-
-    const text =
-        document.createElement("div");
-
-    text.className =
-        "text";
-
-    text.textContent =
-        message;
-
-    wrapper.appendChild(label);
-    wrapper.appendChild(text);
-
-    chat.appendChild(wrapper);
-
-    chat.scrollTop =
-        chat.scrollHeight;
-}
-
-
-/* =================================================
-   AUGE BLINKEN
-================================================= */
-
-function blinkEye() {
-
-    eye.classList.add("blink");
-
-    setTimeout(() => {
-
-        eye.classList.remove("blink");
-
-    }, 180);
-}
-
-
-/* =================================================
-   MORSECODE
-================================================= */
-
-const morseMap = {
-
-    A: ".-",
-    B: "-...",
-    C: "-.-.",
-    D: "-..",
-    E: ".",
-    F: "..-.",
-    G: "--.",
-    H: "....",
-    I: "..",
-    J: ".---",
-    K: "-.-",
-    L: ".-..",
-    M: "--",
-    N: "-.",
-    O: "---",
-    P: ".--.",
-    Q: "--.-",
-    R: ".-.",
-    S: "...",
-    T: "-",
-    U: "..-",
-    V: "...-",
-    W: ".--",
-    X: "-..-",
-    Y: "-.--",
-    Z: "--.."
-
-};
-
-const morseMessage =
-    "SYMBOL ANZUENDEN";
-
-let morseIndex = 0;
-let symbolIndex = 0;
-
-function morseLoop() {
-
-    const letters =
-        morseMessage.split("");
-
-    if (
-        morseIndex >=
-        letters.length
-    ) {
-
-        morse.textContent =
-            "— NEUSTART —";
-
-        morseIndex = 0;
-        symbolIndex = 0;
-
-        setTimeout(
-            morseLoop,
-            1800
-        );
-
-        return;
-    }
-
-    const letter =
-        letters[morseIndex];
-
-    if (letter === " ") {
-
-        morse.textContent =
-            "/";
-
-        morseIndex++;
-
-        symbolIndex = 0;
-
-        setTimeout(
-            morseLoop,
-            1200
-        );
-
-        return;
-    }
-
-    const code =
-        morseMap[letter];
-
-    if (
-        symbolIndex >=
-        code.length
-    ) {
-
-        morseIndex++;
-        symbolIndex = 0;
-
-        setTimeout(
-            morseLoop,
-            800
-        );
-
-        return;
-    }
-
-    const symbol =
-        code[symbolIndex];
-
-    morse.textContent =
-        symbol === "."
-            ? "•"
-            : "—";
-
-    blinkEye();
-
-    symbolIndex++;
-
-    setTimeout(
-        morseLoop,
-        symbol === "."
-            ? 900
-            : 1500
-    );
-}
-
-morseLoop();
-
-
-/* =================================================
-   BELEIDIGUNGEN
-================================================= */
-
-const insults = [
-
-    "arschloch",
-    "idiot",
-    "blöd",
-    "blödmann",
-    "dumm",
-    "scheiße",
-    "scheisse",
-    "fick",
-    "fick dich",
-    "hurensohn",
-    "hure",
-    "wichser",
-    "spast",
-    "opfer",
-    "bastard",
-    "fotze",
-    "penner",
-    "depp"
-
-];
-
-
-function containsInsult(
-    text
-) {
-
-    return insults.some(
-        word =>
-            text.includes(word)
-    );
-
-}
-
-
-/* =================================================
-   OFF-TOPIC
-================================================= */
-
-const offTopic = [
-
-    "minecraft",
-    "fortnite",
-    "youtube",
-    "tiktok",
-    "instagram",
-    "fußball",
-    "fussball",
-    "pizza",
-    "musik",
-    "schule",
-    "mathe"
-
-];
-
-
-function isOffTopic(
-    text
-) {
-
-    return offTopic.some(
-        word =>
-            text.includes(word)
-    );
-
-}
-
-
-/* =================================================
-   NOTFALLNUMMERN
-================================================= */
-
-let emergencyStep =
-    false;
-
-
-const emergencyResponses = {
-
-    "01":
-        "Notfallkanal 01. Bei Gasgeruch. Bitte verlassen Sie den betroffenen Bereich und warten Sie auf weitere Anweisungen.",
-
-    "02":
-        "Notfallkanal 02. Hund bellt oder ungewöhnliches Tiergeräusch. Bitte überprüfen Sie aufmerksam die Umgebung.",
-
-    "03":
-        "Notfall erkannt, Maßnahmen werden eingeleitet.\n\nEs befinden sich lediglich drei Personen in der Umgebung. Stellen Sie sicher, dass Hilfeschreie nicht von ihnen kommen. Sollte dies nicht der Fall sein, finden Sie eine weitere Hilfetafel in einem Notfall-Ordner.",
-
-    "04":
-        "Notfallkanal 04. Feuer oder Rauch. Bitte entfernen Sie sich vom betroffenen Bereich und warten Sie auf weitere Anweisungen.",
-
-    "05":
-        "Notfallkanal 05. Wasseraustritt festgestellt. Bitte überprüfen Sie die Umgebung.",
-
-    "06":
-        "Notfallkanal 06. Elektrische Störung. Berühren Sie keine unbekannten technischen Komponenten.",
-
-    "07":
-        "Notfallkanal 07. Verletzte Person. Bitte informieren Sie das Showpersonal und warten Sie auf weitere Anweisungen.",
-
-    "08":
-        "Notfallkanal 08. Ungewöhnliches Geräusch oder unbekannte Bewegung. Überprüfen Sie die Umgebung aufmerksam.",
-
-    "09":
-        "Notfallkanal 09. Sonstiger Notfall. Bitte bleiben Sie ruhig und warten Sie auf weitere Anweisungen."
-
-};
-
-
-/* =================================================
-   ZAHLEN ERKENNEN
-================================================= */
-
-const numberWords = {
-
-    "eins": 1,
-    "ein": 1,
-    "zwei": 2,
-    "drei": 3,
-    "vier": 4,
-    "fünf": 5,
-    "fuenf": 5,
-    "sechs": 6,
-    "sieben": 7,
-    "acht": 8,
-    "neun": 9,
-    "zehn": 10,
-    "elf": 11,
-    "zwölf": 12,
-    "zwoelf": 12,
-    "dreizehn": 13,
-    "vierzehn": 14,
-    "fünfzehn": 15,
-    "fuenfzehn": 15,
-    "sechzehn": 16,
-    "siebzehn": 17,
-    "achtzehn": 18,
-    "neunzehn": 19,
-    "zwanzig": 20
-
-};
-
-
-function getEmergencyNumber(
-    command
-) {
-
-    /* 01 / 02 / 03 usw. */
-
-    const direct =
-        command.match(
-            /\b([0-9]{1,3})\b/
-        );
-
-    if (direct) {
-
-        return parseInt(
-            direct[1],
-            10
-        );
-
+      }
     }
 
 
-    /* "null drei" */
+    /*
+      ------------------------------------------------------------
+      VIDEO EVENTS
+      ------------------------------------------------------------
+    */
 
-    const zero =
-        command.match(
-            /\bnull\s+(eins|ein|zwei|drei|vier|fünf|fuenf|sechs|sieben|acht|neun)\b/
-        );
+    video.addEventListener("playing", () => {
 
-    if (zero) {
+      setLive(true);
 
-        return numberWords[
-            zero[1]
-        ];
+      playButton.textContent = "❚❚ Pause";
 
-    }
+    });
 
 
-    /* "drei", "vier", "zehn" usw. */
+    video.addEventListener("pause", () => {
 
-    const words =
-        command.split(/\s+/);
+      if (video.srcObject) {
+        playButton.textContent = "▶ Start";
+      }
 
-    for (
-        const word of words
-    ) {
+    });
 
-        if (
-            numberWords[word]
-            !== undefined
-        ) {
 
-            return numberWords[word];
+    video.addEventListener("waiting", () => {
 
-        }
+      if (video.srcObject) {
 
-    }
+        waiting.style.display = "flex";
 
-    return null;
+        waitingText.textContent =
+          "Der Minecraft-Stream lädt...";
 
-}
+      }
 
+    });
 
-/* =================================================
-   OBSERVER
-================================================= */
 
-function getObserverAnswer(
-    command
-) {
+    video.addEventListener("canplay", () => {
 
-    command =
-        command
-            .toLowerCase()
-            .trim();
+      if (video.srcObject) {
 
+        waiting.style.display = "none";
 
-    /* BELEIDIGUNG */
+      }
 
-    if (
-        containsInsult(
-            command
-        )
-    ) {
+    });
 
-        return (
-            "Bitte unterlasse das, wir sind im öffentlich Rechtlichen Fernsehen zu sehen!"
-        );
 
-    }
+    video.addEventListener("error", () => {
 
+      setLive(false);
 
-    /* NOTFALLNUMMERN */
+      waitingText.textContent =
+        "Der Minecraft-Stream konnte nicht geladen werden.";
 
-    if (
-        command.includes(
-            "notfallnummern"
-        )
-    ) {
+      connectionStatus.textContent =
+        "Fehler";
 
-        emergencyStep =
-            true;
+      connectionStatus.className =
+        "connection error";
 
-        return (
-            "Nennen Sie jetzt die Notfallnummer."
-        );
+    });
 
-    }
 
+    /*
+      ------------------------------------------------------------
+      PLAY / PAUSE
+      ------------------------------------------------------------
+    */
 
-    /* NOTFALLNUMMER EINGABE */
+    playButton.addEventListener("click", async () => {
 
-    if (
-        emergencyStep
-    ) {
+      try {
 
-        const number =
-            getEmergencyNumber(
-                command
-            );
+        if (video.paused) {
 
+          await video.play();
 
-        if (
-            number !== null
-        ) {
-
-            emergencyStep =
-                false;
-
-
-            if (
-                number >= 10
-            ) {
-
-                return (
-                    "Maximale Anzahl der Notfallnummern bis 09."
-                );
-
-            }
-
-
-            const formatted =
-                String(number)
-                    .padStart(2, "0");
-
-
-            if (
-                emergencyResponses[
-                    formatted
-                ]
-            ) {
-
-                return emergencyResponses[
-                    formatted
-                ];
-
-            }
-
-        }
-
-    }
-
-
-    /* ALTE ANTWORTEN */
-
-    if (
-        command === "hallo" ||
-        command === "hi" ||
-        command === "hey" ||
-        command.startsWith("hallo ")
-    ) {
-
-        return "Hallo.";
-
-    }
-
-
-    if (
-        command === "was"
-    ) {
-
-        return "Was?";
-
-    }
-
-
-    if (
-        command.includes(
-            "wer bist du"
-        ) ||
-        command.includes(
-            "was bist du"
-        ) ||
-        command.includes(
-            "wie heißt du"
-        ) ||
-        command.includes(
-            "wie heisst du"
-        )
-    ) {
-
-        return "Observer Typ 0.4.";
-
-    }
-
-
-    if (
-        command.includes(
-            "wo sind wir"
-        ) ||
-        (
-            command.includes("wo") &&
-            command.includes("sind") &&
-            command.includes("wir")
-        )
-    ) {
-
-        return (
-            "Ihr wurdet von zwei Männern hier reingebracht, " +
-            "sie trugen einen schwarzen Hoodie und eine schwarze Winterjacke, " +
-            "der eine hatte einen Zettel darin versteckt."
-        );
-
-    }
-
-
-    if (
-        command.includes(
-            "hilfe"
-        ) ||
-        command.includes(
-            "hilf uns"
-        )
-    ) {
-
-        return (
-            "Ich bin nicht fürs Helfen da."
-        );
-
-    }
-
-
-    if (
-        command.includes(
-            "waschmaschine"
-        )
-    ) {
-
-        return (
-            "Ich bin nicht für eine Wäsche gemacht."
-        );
-
-    }
-
-
-    if (
-        command.includes("wie") &&
-        command.includes("kommen") &&
-        (
-            command.includes("raus") ||
-            command.includes("heraus")
-        )
-    ) {
-
-        return (
-            "Probiert es mal mit der Tür, sonst sind alle Wege im Betriebssystem blockiert."
-        );
-
-    }
-
-
-    /* OFF-TOPIC */
-
-    if (
-        isOffTopic(
-            command
-        )
-    ) {
-
-        return (
-            "Diese Frage gehört nicht zur Show, stelle eine andere!"
-        );
-
-    }
-
-
-    return (
-        "Ich habe das nicht verstanden. Stelle die Frage bitte noch einmal."
-    );
-
-}
-
-
-/* =================================================
-   SENDEN
-================================================= */
-
-function sendMessage() {
-
-    const text =
-        input.value.trim();
-
-    if (!text) {
-        return;
-    }
-
-    input.value = "";
-
-    stopListening();
-
-    addMessage(
-        "DU",
-        text
-    );
-
-    const answer =
-        getObserverAnswer(
-            text
-        );
-
-    setTimeout(() => {
-
-        addMessage(
-            "OBSERVER",
-            answer
-        );
-
-    }, 250);
-
-}
-
-
-send.addEventListener(
-    "click",
-    sendMessage
-);
-
-
-input.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter"
-        ) {
-
-            event.preventDefault();
-
-            sendMessage();
-
-        }
-
-    }
-);
-
-
-/* =================================================
-   MIKROFON
-================================================= */
-
-let recognition =
-    null;
-
-let listening =
-    false;
-
-
-const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
-
-
-if (
-    SpeechRecognition
-) {
-
-    recognition =
-        new SpeechRecognition();
-
-    recognition.lang =
-        "de-DE";
-
-    recognition.continuous =
-        false;
-
-    recognition.interimResults =
-        true;
-
-
-    recognition.onstart =
-        () => {
-
-            listening =
-                true;
-
-            mic.classList.add(
-                "active"
-            );
-
-            status.classList.add(
-                "active"
-            );
-
-        };
-
-
-    recognition.onresult =
-        event => {
-
-            let result = "";
-
-            for (
-                let i =
-                    event.resultIndex;
-
-                i <
-                    event.results.length;
-
-                i++
-            ) {
-
-                result +=
-                    event.results[i][0]
-                        .transcript;
-
-            }
-
-            input.value =
-                result.trim();
-
-        };
-
-
-    recognition.onerror =
-        event => {
-
-            console.log(
-                "Mikrofonfehler:",
-                event.error
-            );
-
-            stopListening();
-
-        };
-
-
-    recognition.onend =
-        () => {
-
-            listening =
-                false;
-
-            mic.classList.remove(
-                "active"
-            );
-
-            status.classList.remove(
-                "active"
-            );
-
-        };
-
-}
-
-
-function startListening() {
-
-    if (
-        !recognition ||
-        listening
-    ) {
-
-        return;
-
-    }
-
-    try {
-
-        recognition.start();
-
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-}
-
-
-function stopListening() {
-
-    if (recognition) {
-
-        try {
-
-            recognition.stop();
-
-        } catch (error) {}
-
-    }
-
-    listening =
-        false;
-
-    mic.classList.remove(
-        "active"
-    );
-
-    status.classList.remove(
-        "active"
-    );
-
-}
-
-
-mic.addEventListener(
-    "click",
-    () => {
-
-        if (
-            listening
-        ) {
-
-            stopListening();
+          playButton.textContent =
+            "❚❚ Pause";
 
         } else {
 
-            startListening();
+          video.pause();
+
+          playButton.textContent =
+            "▶ Start";
 
         }
 
+      } catch (error) {
+
+        console.error(
+          "Video konnte nicht gestartet werden:",
+          error
+        );
+
+      }
+
+    });
+
+
+    /*
+      ------------------------------------------------------------
+      MUTE
+      ------------------------------------------------------------
+    */
+
+    muteButton.addEventListener("click", () => {
+
+      video.muted = !video.muted;
+
+      if (video.muted) {
+
+        muteButton.textContent =
+          "🔇 Ton";
+
+      } else {
+
+        muteButton.textContent =
+          "🔊 Ton";
+
+      }
+
+    });
+
+
+    /*
+      ------------------------------------------------------------
+      FULLSCREEN
+      ------------------------------------------------------------
+    */
+
+    fullscreenButton.addEventListener("click", async () => {
+
+      try {
+
+        if (!document.fullscreenElement) {
+
+          await videoContainer.requestFullscreen();
+
+          fullscreenButton.textContent =
+            "✕ Vollbild";
+
+        } else {
+
+          await document.exitFullscreen();
+
+          fullscreenButton.textContent =
+            "⛶ Vollbild";
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Vollbild konnte nicht geöffnet werden:",
+          error
+        );
+
+      }
+
+    });
+
+
+    document.addEventListener(
+      "fullscreenchange",
+      () => {
+
+        if (!document.fullscreenElement) {
+
+          fullscreenButton.textContent =
+            "⛶ Vollbild";
+
+        }
+
+      }
+    );
+
+
+    /*
+      ------------------------------------------------------------
+      CONTROLS EINBLENDEN
+      ------------------------------------------------------------
+    */
+
+    let controlsTimer;
+
+    videoContainer.addEventListener(
+      "mousemove",
+      () => {
+
+        controls.classList.add("visible");
+
+        clearTimeout(controlsTimer);
+
+        controlsTimer = setTimeout(() => {
+
+          controls.classList.remove("visible");
+
+        }, 2500);
+
+      }
+    );
+
+
+    /*
+      ------------------------------------------------------------
+      WEBRTC STARTPUNKT
+      ------------------------------------------------------------
+
+      Sobald unser Minecraft-Streamer verbunden ist,
+      wird hier der echte MediaStream eingesetzt:
+
+          video.srcObject = remoteStream;
+
+      Danach:
+
+          setLive(true);
+
+      Der folgende Teil ist absichtlich noch leer,
+      damit die Seite bereits funktioniert, bevor
+      der Stream-Server eingerichtet ist.
+    */
+
+
+    function setMinecraftStream(stream) {
+
+      if (!stream) {
+        return;
+      }
+
+      video.srcObject = stream;
+
+      video.muted = false;
+
+      video.play()
+        .then(() => {
+
+          setLive(true);
+
+        })
+        .catch(error => {
+
+          console.error(
+            "Stream konnte nicht abgespielt werden:",
+            error
+          );
+
+          setLive(true);
+
+        });
+
     }
-);
 
 
-/* =================================================
-   START
-================================================= */
+    /*
+      ------------------------------------------------------------
+      STARTZUSTAND
+      ------------------------------------------------------------
+    */
 
-addMessage(
-    "OBSERVER",
-    "Beobachtung aktiviert."
-);
+    setLive(false);
 
-</script>
+
+    /*
+      ============================================================
+      WICHTIG
+      ============================================================
+
+      Diese Website ist jetzt der PLAYER.
+
+      Der nächste technische Teil ist:
+
+      Minecraft (CurseForge)
+             ↓
+      OBS / Screen Capture
+             ↓
+      WebRTC
+             ↓
+      GitHub-Seite
+             ↓
+      Zuschauer
+
+      Dafür müssen wir noch den Stream-Sender bauen.
+      ============================================================
+    */
+
+  </script>
 
 </body>
 </html>
+```

@@ -1,917 +1,779 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>CCTV REGIE</title>
-
-  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-
-  <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-
-      margin: 0;
-      padding: 0;
-
-      min-height: 100%;
-
-      background: #080808;
-
-      color: white;
-
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    }
-
-
-    body {
-
-      padding: 20px;
-
-    }
-
-
-    .container {
-
-      width: 100%;
-      max-width: 700px;
-
-      margin: 0 auto;
-
-    }
-
-
-    h1 {
-
-      margin: 0 0 20px;
-
-      font-size: 28px;
-
-      letter-spacing: 1px;
-
-    }
-
-
-    .status {
-
-      display: flex;
-
-      align-items: center;
-
-      gap: 10px;
-
-      padding: 14px 16px;
-
-      margin-bottom: 18px;
-
-      background: #111;
-
-      border: 1px solid #292929;
-
-      border-radius: 9px;
-
-    }
-
-
-    #statusDot {
-
-      width: 11px;
-      height: 11px;
-
-      border-radius: 50%;
-
-      background: #e83232;
-
-      box-shadow:
-        0 0 8px
-        rgba(232,50,50,0.7);
-
-    }
-
-
-    #statusText {
-
-      font-weight: 700;
-
-    }
-
-
-    .box {
-
-      padding: 18px;
-
-      margin-bottom: 18px;
-
-      background: #111;
-
-      border: 1px solid #292929;
-
-      border-radius: 9px;
-
-    }
-
-
-    .label {
-
-      display: block;
-
-      margin-bottom: 9px;
-
-      color: #aaa;
-
-      font-size: 13px;
-
-      font-weight: 700;
-
-    }
-
-
-    input {
-
-      width: 100%;
-
-      padding: 13px;
-
-      background: #080808;
-
-      color: white;
-
-      border: 1px solid #333;
-
-      border-radius: 7px;
-
-      outline: none;
-
-      font-size: 15px;
-
-    }
-
-
-    input:focus {
-
-      border-color: #20d95b;
-
-    }
-
-
-    button {
-
-      border: 0;
-
-      border-radius: 7px;
-
-      padding: 12px 16px;
-
-      margin-top: 10px;
-
-      background: #202020;
-
-      color: white;
-
-      cursor: pointer;
-
-      font-weight: 700;
-
-      font-size: 14px;
-
-    }
-
-
-    button:hover {
-
-      background: #303030;
-
-    }
-
-
-    button:disabled {
-
-      opacity: 0.35;
-
-      cursor: not-allowed;
-
-    }
-
-
-    #sendText {
-
-      width: 100%;
-
-      background: #20d95b;
-
-      color: #000;
-
-    }
-
-
-    #privacyButton {
-
-      width: 100%;
-
-      padding: 16px;
-
-      background: #e83232;
-
-      color: white;
-
-      font-size: 16px;
-
-    }
-
-
-    #privacyButton:hover {
-
-      background: #c92727;
-
-    }
-
-
-    .quick {
-
-      display: flex;
-
-      flex-wrap: wrap;
-
-      gap: 8px;
-
-      margin-top: 10px;
-
-    }
-
-
-    .quick button {
-
-      margin: 0;
-
-    }
-
-
-    #log {
-
-      min-height: 80px;
-
-      max-height: 200px;
-
-      overflow-y: auto;
-
-      padding: 12px;
-
-      background: #050505;
-
-      border: 1px solid #222;
-
-      border-radius: 7px;
-
-      color: #888;
-
-      font-size: 12px;
-
-      line-height: 1.5;
-
-      white-space: pre-wrap;
-
-    }
-
-
-    .small {
-
-      margin-top: 8px;
-
-      color: #666;
-
-      font-size: 12px;
-
-    }
-
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CCTV Regie</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: #090909;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    padding: 25px;
+}
+
+.wrapper {
+    width: min(900px, 100%);
+    margin: auto;
+}
+
+header {
+    border-bottom: 1px solid #333;
+    padding-bottom: 18px;
+    margin-bottom: 25px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 4px;
+}
+
+.subtitle {
+    color: #777;
+    margin-top: 7px;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    background: #111;
+    border: 1px solid #292929;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.statusDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #777;
+}
+
+.statusDot.online {
+    background: #00d26a;
+    box-shadow: 0 0 12px rgba(0,210,106,.7);
+}
+
+.statusText {
+    font-size: 14px;
+}
+
+.panel {
+    background: #111;
+    border: 1px solid #292929;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.panelTitle {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #999;
+    margin-bottom: 14px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+    border: 1px solid #333;
+    background: #080808;
+    color: white;
+    padding: 13px;
+    border-radius: 4px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    outline: none;
+}
+
+textarea:focus {
+    border-color: #666;
+}
+
+button {
+    border: 1px solid #3a3a3a;
+    background: #191919;
+    color: white;
+    border-radius: 4px;
+    padding: 11px 16px;
+    margin-top: 10px;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #292929;
+}
+
+button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+button.danger {
+    border-color: #7b2222;
+    background: #270c0c;
+}
+
+button.danger:hover {
+    background: #421010;
+}
+
+.quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quick button {
+    margin: 0;
+}
+
+.log {
+    background: #050505;
+    border: 1px solid #222;
+    border-radius: 4px;
+    padding: 12px;
+    height: 180px;
+    overflow-y: auto;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    color: #888;
+}
+
+.logLine {
+    margin-bottom: 6px;
+}
+
+.logLine.good {
+    color: #66d98b;
+}
+
+.logLine.bad {
+    color: #e86b6b;
+}
+
+</style>
 </head>
-
 
 <body>
 
+<div class="wrapper">
 
-<div class="container">
+    <header>
+        <div class="title">CCTV REGIE</div>
+        <div class="subtitle">
+            LIVE STREAM STEUERUNG
+        </div>
+    </header>
 
+    <div class="status">
 
-  <h1>
-    CCTV REGIE
-  </h1>
+        <div
+            id="statusDot"
+            class="statusDot">
+        </div>
 
-
-  <div class="status">
-
-    <div id="statusDot"></div>
-
-    <div id="statusText">
-      Verbinde mit Stream...
-    </div>
-
-  </div>
-
-
-  <div class="box">
-
-    <span class="label">
-      Text auf dem Stream
-    </span>
-
-
-    <input
-      id="textInput"
-      type="text"
-      maxlength="180"
-      placeholder="Text eingeben..."
-    >
-
-
-    <button
-      id="sendText"
-      disabled
-    >
-      TEXT 10 SEKUNDEN EINBLENDEN
-    </button>
-
-
-    <div class="quick">
-
-      <button
-        class="quickButton"
-        data-text="LIVE"
-      >
-        LIVE
-      </button>
-
-      <button
-        class="quickButton"
-        data-text="Bin gleich wieder da."
-      >
-        BIN GLEICH WIEDER DA
-      </button>
-
-      <button
-        class="quickButton"
-        data-text="Minecraft LIVE"
-      >
-        MINECRAFT LIVE
-      </button>
+        <div
+            id="statusText"
+            class="statusText">
+            Verbindung wird hergestellt...
+        </div>
 
     </div>
 
-  </div>
+    <div class="panel">
 
+        <div class="panelTitle">
+            TEXT EINBLENDEN
+        </div>
 
-  <div class="box">
+        <textarea
+            id="textInput"
+            placeholder="Text eingeben..."></textarea>
 
-    <span class="label">
-      Stream-Steuerung
-    </span>
+        <button
+            id="sendText"
+            disabled>
+            TEXT SENDEN
+        </button>
 
-
-    <button
-      id="privacyButton"
-      disabled
-    >
-      SICHTSCHUTZ
-    </button>
-
-
-    <div class="small">
-      Der Stream wird langsam schwarz, zeigt den
-      Sichtschutz und kommt anschließend automatisch zurück.
     </div>
 
-  </div>
+    <div class="panel">
 
+        <div class="panelTitle">
+            SCHNELLTEXT
+        </div>
 
-  <div class="box">
+        <div class="quick">
 
-    <span class="label">
-      Regie-Log
-    </span>
+            <button
+                class="quickText"
+                data-text="BIN GLEICH WIEDER DA">
+                BIN GLEICH WIEDER DA
+            </button>
 
+            <button
+                class="quickText"
+                data-text="KURZE PAUSE">
+                KURZE PAUSE
+            </button>
 
-    <div id="log"></div>
+            <button
+                class="quickText"
+                data-text="STREAM LÄUFT">
+                STREAM LÄUFT
+            </button>
 
-  </div>
+        </div>
 
+    </div>
+
+    <div class="panel">
+
+        <div class="panelTitle">
+            SICHTSCHUTZ
+        </div>
+
+        <button
+            id="privacyButton"
+            class="danger"
+            disabled>
+            SICHTSCHUTZ AKTIVIEREN
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <div class="panelTitle">
+            REGIE LOG
+        </div>
+
+        <div
+            id="log"
+            class="log">
+        </div>
+
+    </div>
 
 </div>
 
-
 <script>
 
-  /*
-  ============================================================
-  CCTV REGIE
-  ============================================================
-  */
+/* =========================================================
+   SUPABASE
+   ========================================================= */
 
+const SUPABASE_URL =
+    "https://zxaczahnnnztcglsinej.supabase.co";
 
-  const STREAM_ID =
-    "a-mforever-cctv-stream-2026";
+const SUPABASE_KEY =
+    "sb_publishable_K9b2XabV1bJz9oCj7W6eaQ_AtBeXzm4";
 
-
-  let peer =
-    null;
-
-
-  let connection =
-    null;
-
-
-  const statusDot =
-    document.getElementById(
-      "statusDot"
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
     );
 
+/* =========================================================
+   EINSTELLUNGEN
+   ========================================================= */
 
-  const statusText =
+const ROOM =
+    "cctv-live-stream";
+
+/* =========================================================
+   ELEMENTE
+   ========================================================= */
+
+const statusDot =
     document.getElementById(
-      "statusText"
+        "statusDot"
     );
 
-
-  const textInput =
+const statusText =
     document.getElementById(
-      "textInput"
+        "statusText"
     );
 
-
-  const sendText =
+const textInput =
     document.getElementById(
-      "sendText"
+        "textInput"
     );
 
-
-  const privacyButton =
+const sendText =
     document.getElementById(
-      "privacyButton"
+        "sendText"
     );
 
-
-  const logBox =
+const privacyButton =
     document.getElementById(
-      "log"
+        "privacyButton"
     );
 
+const log =
+    document.getElementById(
+        "log"
+    );
 
-  /*
-  ============================================================
-  LOG
-  ============================================================
-  */
+/* =========================================================
+   STATUS
+   ========================================================= */
 
-  function log(text) {
+let channel = null;
+let connected = false;
+let streamOnline = false;
+
+/* =========================================================
+   LOG
+   ========================================================= */
+
+function addLog(
+    message,
+    type = ""
+) {
+
+    const line =
+        document.createElement(
+            "div"
+        );
+
+    line.className =
+        "logLine " + type;
 
     const time =
-      new Date()
-        .toLocaleTimeString(
-          "de-DE"
-        );
+        new Date()
+            .toLocaleTimeString(
+                "de-DE"
+            );
 
+    line.textContent =
+        "[" +
+        time +
+        "] " +
+        message;
 
-    logBox.textContent +=
-      "[" +
-      time +
-      "] " +
-      text +
-      "\n";
+    log.appendChild(line);
 
+    log.scrollTop =
+        log.scrollHeight;
+}
 
-    logBox.scrollTop =
-      logBox.scrollHeight;
+/* =========================================================
+   STATUS ANZEIGE
+   ========================================================= */
 
-  }
+function updateStatus() {
 
+    if (!connected) {
 
-  /*
-  ============================================================
-  STATUS
-  ============================================================
-  */
+        statusDot.className =
+            "statusDot";
 
-  function setOnline(online) {
+        statusText.textContent =
+            "Keine Verbindung";
 
-    if (online) {
+        sendText.disabled =
+            true;
 
-      statusDot.style.background =
-        "#20d95b";
+        privacyButton.disabled =
+            true;
 
-      statusDot.style.boxShadow =
-        "0 0 8px rgba(32,217,91,0.8)";
-
-      statusText.textContent =
-        "Stream ist ONLINE";
-
-      sendText.disabled =
-        false;
-
-      privacyButton.disabled =
-        false;
-
+        return;
     }
 
-    else {
+    if (!streamOnline) {
 
-      statusDot.style.background =
-        "#e83232";
+        statusDot.className =
+            "statusDot";
 
-      statusDot.style.boxShadow =
-        "0 0 8px rgba(232,50,50,0.7)";
+        statusText.textContent =
+            "Regie verbunden – Stream ist offline";
 
-      statusText.textContent =
-        "Stream ist nicht online";
+        sendText.disabled =
+            true;
 
-      sendText.disabled =
-        true;
+        privacyButton.disabled =
+            true;
 
-      privacyButton.disabled =
-        true;
-
+        return;
     }
 
-  }
-
-
-  /*
-  ============================================================
-  MIT STREAM VERBINDEN
-  ============================================================
-  */
-
-  function connectToStream() {
-
-    setOnline(false);
+    statusDot.className =
+        "statusDot online";
 
     statusText.textContent =
-      "Verbinde mit Stream...";
+        "Stream ist online";
 
+    sendText.disabled =
+        false;
 
-    /*
-    Alte Verbindung schließen
-    */
+    privacyButton.disabled =
+        false;
+}
 
-    if (connection) {
+/* =========================================================
+   CHANNEL
+   ========================================================= */
 
-      try {
-        connection.close();
-      }
-      catch (e) {}
+async function connectChannel() {
 
-      connection = null;
-
-    }
-
-
-    if (
-      peer &&
-      !peer.destroyed
-    ) {
-
-      try {
-        peer.destroy();
-      }
-      catch (e) {}
-
-    }
-
-
-    /*
-    Eigene zufällige Peer-ID
-    */
-
-    peer =
-      new Peer(undefined, {
-
-        debug: 1,
-
-        config: {
-
-          iceServers: [
-
+    channel =
+        supabaseClient.channel(
+            ROOM,
             {
-              urls:
-                "stun:stun.l.google.com:19302"
+                config: {
+                    broadcast: {
+                        self: false
+                    }
+                }
             }
+        );
 
-          ]
+    channel.on(
+        "broadcast",
+        {
+            event: "signal"
+        },
+        ({ payload }) => {
+
+            handleSignal(
+                payload
+            );
 
         }
-
-      });
-
-
-    peer.on(
-      "open",
-      function(myId) {
-
-        log(
-          "Regie verbunden."
-        );
-
-
-        /*
-        Zum festen Streamer verbinden
-        */
-
-        connection =
-          peer.connect(
-            STREAM_ID,
-            {
-              reliable: true
-            }
-          );
-
-
-        connection.on(
-          "open",
-          function() {
-
-            log(
-              "Verbindung zum Stream hergestellt."
-            );
-
-            setOnline(true);
-
-          }
-        );
-
-
-        connection.on(
-          "close",
-          function() {
-
-            log(
-              "Stream-Verbindung geschlossen."
-            );
-
-            setOnline(false);
-
-
-            /*
-            Automatisch erneut versuchen
-            */
-
-            setTimeout(
-              connectToStream,
-              2500
-            );
-
-          }
-        );
-
-
-        connection.on(
-          "error",
-          function(error) {
-
-            console.error(
-              error
-            );
-
-            log(
-              "Verbindungsfehler."
-            );
-
-            setOnline(false);
-
-          }
-        );
-
-      }
     );
 
+    const status =
+        await new Promise(
+            resolve => {
 
-    peer.on(
-      "error",
-      function(error) {
+                channel.subscribe(
+                    state => {
 
-        console.error(
-          "PeerJS Regie:",
-          error
+                        console.log(
+                            "Supabase:",
+                            state
+                        );
+
+                        if (
+                            state ===
+                                "SUBSCRIBED" ||
+                            state ===
+                                "CHANNEL_ERROR" ||
+                            state ===
+                                "TIMED_OUT"
+                        ) {
+
+                            resolve(
+                                state
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
         );
 
-
-        if (
-          error.type ===
-          "peer-unavailable"
-        ) {
-
-          statusText.textContent =
-            "Stream ist nicht online";
-
-          setOnline(false);
-
-          setTimeout(
-            connectToStream,
-            2500
-          );
-
-        }
-
-        else {
-
-          statusText.textContent =
-            "Verbindungsfehler";
-
-          setOnline(false);
-
-        }
-
-      }
-    );
-
-  }
-
-
-  /*
-  ============================================================
-  TEXT SENDEN
-  ============================================================
-  */
-
-  function sendMessage(text) {
-
     if (
-      !connection ||
-      !connection.open
+        status !==
+        "SUBSCRIBED"
     ) {
 
-      log(
-        "Keine Stream-Verbindung."
-      );
+        connected = false;
 
-      return;
+        updateStatus();
 
+        addLog(
+            "Supabase-Verbindung fehlgeschlagen.",
+            "bad"
+        );
+
+        return;
     }
 
+    connected = true;
+
+    updateStatus();
+
+    addLog(
+        "Regie mit Stream-System verbunden.",
+        "good"
+    );
+
+    await sendSignal({
+        type: "status-request"
+    });
+}
+
+/* =========================================================
+   SIGNAL SENDEN
+   ========================================================= */
+
+async function sendSignal(
+    payload
+) {
+
+    if (!channel) return;
+
+    await channel.send({
+        type: "broadcast",
+        event: "signal",
+        payload
+    });
+}
+
+/* =========================================================
+   SIGNAL EMPFANGEN
+   ========================================================= */
+
+function handleSignal(
+    message
+) {
+
+    if (
+        !message ||
+        !message.type
+    ) {
+        return;
+    }
+
+    if (
+        message.type ===
+        "streamer-online"
+    ) {
+
+        streamOnline = true;
+
+        updateStatus();
+
+        addLog(
+            "Stream ist online.",
+            "good"
+        );
+
+        return;
+    }
+
+    if (
+        message.type ===
+        "streamer-offline"
+    ) {
+
+        streamOnline = false;
+
+        updateStatus();
+
+        addLog(
+            "Stream ist offline."
+        );
+
+        return;
+    }
+
+    if (
+        message.type ===
+        "streamer-status"
+    ) {
+
+        streamOnline =
+            message.online === true;
+
+        updateStatus();
+
+        addLog(
+            streamOnline
+                ? "Stream ist online."
+                : "Stream ist offline."
+        );
+
+        return;
+    }
+}
+
+/* =========================================================
+   TEXT SENDEN
+   ========================================================= */
+
+async function sendTextCommand(
+    text
+) {
 
     text =
-      String(text || "")
-        .trim();
+        String(text || "")
+            .trim();
 
+    if (!text) return;
 
-    if (!text) {
-      return;
+    if (!streamOnline) {
+
+        addLog(
+            "Stream ist offline.",
+            "bad"
+        );
+
+        return;
     }
 
+    await sendCommand({
+        type: "text",
+        text
+    });
 
-    connection.send({
+    addLog(
+        "Text gesendet: " +
+        text,
+        "good"
+    );
+}
 
-      type: "text",
+/* =========================================================
+   COMMAND SENDEN
+   ========================================================= */
 
-      text: text
+async function sendCommand(
+    payload
+) {
+
+    if (!channel) return;
+
+    await channel.send({
+        type: "broadcast",
+        event: "command",
+        payload
+    });
+}
+
+/* =========================================================
+   TEXT BUTTON
+   ========================================================= */
+
+sendText.addEventListener(
+    "click",
+    async () => {
+
+        await sendTextCommand(
+            textInput.value
+        );
+
+        textInput.value = "";
+
+    }
+);
+
+/* =========================================================
+   ENTER
+   ========================================================= */
+
+textInput.addEventListener(
+    "keydown",
+    async event => {
+
+        if (
+            event.key ===
+                "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            await sendTextCommand(
+                textInput.value
+            );
+
+            textInput.value = "";
+
+        }
+
+    }
+);
+
+/* =========================================================
+   SCHNELLTEXT
+   ========================================================= */
+
+document
+    .querySelectorAll(
+        ".quickText"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            async () => {
+
+                await sendTextCommand(
+                    button.dataset.text
+                );
+
+            }
+        );
 
     });
 
+/* =========================================================
+   SICHTSCHUTZ
+   ========================================================= */
 
-    log(
-      "Text gesendet: " +
-      text
-    );
-
-
-    textInput.value =
-      "";
-
-  }
-
-
-  /*
-  ============================================================
-  TEXT BUTTON
-  ============================================================
-  */
-
-  sendText.addEventListener(
+privacyButton.addEventListener(
     "click",
-    function() {
+    async () => {
 
-      sendMessage(
-        textInput.value
-      );
+        if (!streamOnline) {
 
-    }
-  );
-
-
-  /*
-  Enter = senden
-  */
-
-  textInput.addEventListener(
-    "keydown",
-    function(event) {
-
-      if (
-        event.key ===
-        "Enter"
-      ) {
-
-        event.preventDefault();
-
-        sendMessage(
-          textInput.value
-        );
-
-      }
-
-    }
-  );
-
-
-  /*
-  ============================================================
-  SCHNELLTEXT
-  ============================================================
-  */
-
-  document
-    .querySelectorAll(
-      ".quickButton"
-    )
-    .forEach(
-      function(button) {
-
-        button.addEventListener(
-          "click",
-          function() {
-
-            sendMessage(
-              button.dataset.text
+            addLog(
+                "Stream ist offline.",
+                "bad"
             );
 
-          }
+            return;
+        }
+
+        await sendCommand({
+            type: "privacy"
+        });
+
+        addLog(
+            "Sichtschutz aktiviert.",
+            "good"
         );
 
-      }
-    );
-
-
-  /*
-  ============================================================
-  SICHTSCHUTZ
-  ============================================================
-  */
-
-  privacyButton.addEventListener(
-    "click",
-    function() {
-
-      if (
-        !connection ||
-        !connection.open
-      ) {
-
-        return;
-
-      }
-
-
-      connection.send({
-
-        type:
-          "privacy"
-
-      });
-
-
-      log(
-        "Sichtschutz aktiviert."
-      );
-
     }
-  );
+);
 
+/* =========================================================
+   START
+   ========================================================= */
 
-  /*
-  ============================================================
-  START
-  ============================================================
-  */
+updateStatus();
 
-  log(
-    "Regie wird gestartet..."
-  );
-
-
-  connectToStream();
+connectChannel();
 
 </script>
 

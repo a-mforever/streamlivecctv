@@ -12,32 +12,29 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     width: 100%;
     height: 100%;
     background: #000;
-    font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-#viewer {
+#video {
     position: fixed;
     inset: 0;
-    background: #000;
-}
-
-#remoteVideo {
     width: 100%;
     height: 100%;
     object-fit: contain;
     background: #000;
 }
 
-#liveBadge {
+#live {
     position: fixed;
-    top: 15px;
-    right: 15px;
+    top: 14px;
+    right: 14px;
     z-index: 20;
 
     display: flex;
@@ -45,62 +42,55 @@ html, body {
     gap: 7px;
 
     padding: 7px 10px;
-    border-radius: 5px;
 
     background: rgba(0,0,0,.65);
-    color: white;
+    border-radius: 5px;
 
+    color: white;
     font-size: 12px;
     font-weight: bold;
-    letter-spacing: .5px;
 }
 
-#cameraIcon {
-    font-size: 13px;
-}
-
-#liveDot {
+#dot {
     width: 7px;
     height: 7px;
-    background: #ff2222;
     border-radius: 50%;
+    background: #e00000;
 }
 
-#textOverlay {
+#message {
     position: fixed;
     left: 50%;
     bottom: 9%;
     transform: translateX(-50%);
 
-    z-index: 30;
-
     max-width: 85%;
 
     padding: 12px 22px;
 
-    background: rgba(0,0,0,.78);
+    background: rgba(0,0,0,.82);
     color: white;
 
-    border-radius: 8px;
+    border-radius: 7px;
 
     font-size: clamp(18px, 3vw, 34px);
     font-weight: bold;
     text-align: center;
 
     opacity: 0;
-    transition: opacity .4s ease;
+    transition: opacity .4s;
 
+    z-index: 30;
     pointer-events: none;
 }
 
-#textOverlay.show {
+#message.show {
     opacity: 1;
 }
 
 #privacy {
     position: fixed;
     inset: 0;
-
     z-index: 100;
 
     background: #000;
@@ -108,13 +98,12 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-
     flex-direction: column;
 
     opacity: 0;
     pointer-events: none;
 
-    transition: opacity 1s ease;
+    transition: opacity 1s;
 }
 
 #privacy.active {
@@ -122,50 +111,53 @@ html, body {
     pointer-events: all;
 }
 
-#privacyWarning {
-    color: #fff;
+#privacyTitle {
+    color: white;
     font-size: clamp(25px, 5vw, 60px);
     font-weight: bold;
     letter-spacing: 4px;
 }
 
-#privacyText {
+#privacySub {
+    color: #999;
     margin-top: 15px;
-    color: #aaa;
     font-size: 14px;
     letter-spacing: 2px;
 }
 
+
+/* Sender-Bereich */
+
 #senderPanel {
     position: fixed;
     inset: 0;
-
     z-index: 200;
-
-    background: #111;
-    color: white;
 
     display: none;
 
     align-items: center;
     justify-content: center;
-
     flex-direction: column;
+
+    padding: 25px;
+
+    background: #101010;
+    color: white;
 
     text-align: center;
 }
 
 #senderPanel h1 {
-    margin-bottom: 10px;
+    margin: 0 0 10px;
 }
 
 #senderPanel p {
-    color: #aaa;
     max-width: 600px;
+    color: #aaa;
     line-height: 1.5;
 }
 
-#startButton {
+#startStream {
     margin-top: 20px;
 
     padding: 14px 25px;
@@ -173,7 +165,7 @@ html, body {
     border: 0;
     border-radius: 7px;
 
-    background: #19c45b;
+    background: #19b957;
     color: white;
 
     font-size: 16px;
@@ -182,159 +174,181 @@ html, body {
     cursor: pointer;
 }
 
-#startButton:hover {
-    background: #15a84d;
+#startStream:hover {
+    background: #159a48;
 }
 
 #senderStatus {
     margin-top: 15px;
     color: #aaa;
+    font-size: 14px;
 }
 
-#hiddenLocalVideo {
-    display: none;
+#senderMode {
+    margin-top: 25px;
+    color: #666;
+    font-size: 11px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="viewer">
+<video
+    id="video"
+    autoplay
+    playsinline
+    muted
+></video>
 
-    <video
-        id="remoteVideo"
-        autoplay
-        playsinline
-        muted
-    ></video>
-
-    <div id="liveBadge">
-        <span id="cameraIcon">▣</span>
-        <span>LIVE</span>
-        <span id="liveDot"></span>
-    </div>
-
-    <div id="textOverlay"></div>
-
-    <div id="privacy">
-        <div id="privacyWarning">STREAM SICHTSCHUTZ</div>
-        <div id="privacyText">Die Übertragung wird kurz ausgeblendet.</div>
-    </div>
-
+<div id="live">
+    <span>CCTV</span>
+    <span id="dot"></span>
+    <span>LIVE</span>
 </div>
 
-<video id="hiddenLocalVideo" autoplay muted playsinline></video>
+<div id="message"></div>
+
+<div id="privacy">
+    <div id="privacyTitle">STREAM SICHTSCHUTZ</div>
+    <div id="privacySub">Die Übertragung wird kurz ausgeblendet.</div>
+</div>
+
 
 <div id="senderPanel">
 
-    <h1>CCTV Stream Sender</h1>
+    <h1>CCTV STREAM</h1>
 
     <p>
-        Dieser Browser ist als Stream-Sender eingerichtet.
-        Starte die Bildschirmübertragung und wähle deinen Minecraft-Bildschirm aus.
+        Dieser Browser kann den Minecraft-Bildschirm übertragen.
+        Klicke auf „STREAM STARTEN“ und wähle anschließend dein Minecraft-Fenster
+        oder den gesamten Bildschirm aus.
     </p>
 
-    <button id="startButton">
+    <button id="startStream">
         STREAM STARTEN
     </button>
 
     <div id="senderStatus">
-        Sender wird vorbereitet...
+        Stream ist noch nicht gestartet.
+    </div>
+
+    <div id="senderMode">
+        Sender-Modus wird nur auf diesem Gerät gespeichert.
     </div>
 
 </div>
 
+
 <script>
 
-const STREAM_ID = "amforever-cctv-live-928374";
+/* =========================================================
+   KONFIGURATION
+========================================================= */
 
-const isSender =
-    new URLSearchParams(window.location.search).get("send") === "1";
+const STREAM_PEER_ID = "cctv-amforever-live-928374651";
 
-const remoteVideo =
-    document.getElementById("remoteVideo");
+const SENDER_STORAGE_KEY =
+    "cctv_stream_sender_mode";
+
+
+/* =========================================================
+   ELEMENTE
+========================================================= */
+
+const video =
+    document.getElementById("video");
 
 const senderPanel =
     document.getElementById("senderPanel");
 
-const startButton =
-    document.getElementById("startButton");
+const startStream =
+    document.getElementById("startStream");
 
 const senderStatus =
     document.getElementById("senderStatus");
 
-const hiddenLocalVideo =
-    document.getElementById("hiddenLocalVideo");
-
-const textOverlay =
-    document.getElementById("textOverlay");
+const message =
+    document.getElementById("message");
 
 const privacy =
     document.getElementById("privacy");
 
+
+/* =========================================================
+   VARIABLEN
+========================================================= */
+
 let peer = null;
+
 let screenStream = null;
 
-let textTimer = null;
+let senderConnections = [];
+
+let messageTimer = null;
+
 let privacyTimer = null;
+
+
+/* =========================================================
+   SENDER-MODUS
+========================================================= */
+
+/*
+   WICHTIG:
+
+   Keine ?send=1 URL.
+
+   Der PC wird einmal über den Button als Sender aktiviert.
+   Danach merkt sich genau DIESER Browser den Sender-Modus.
+*/
+
+const isSender =
+    localStorage.getItem(SENDER_STORAGE_KEY) === "true";
+
+
+if (isSender) {
+
+    senderPanel.style.display = "flex";
+
+    startSender();
+
+} else {
+
+    startViewer();
+
+}
 
 
 /* =========================================================
    SENDER
 ========================================================= */
 
-if (isSender) {
-
-    senderPanel.style.display = "flex";
-
-    senderStatus.textContent =
-        "Verbinde mit dem Stream-Server...";
-
-    startSender();
-
-}
-
-
-/* =========================================================
-   SENDER START
-========================================================= */
-
 function startSender() {
 
-    peer = new Peer(STREAM_ID, {
+    console.log("Sender wird gestartet...");
 
-        debug: 2
+    senderStatus.textContent =
+        "Verbinde mit PeerJS...";
 
-    });
+
+    peer = new Peer(
+        STREAM_PEER_ID,
+        {
+            debug: 2
+        }
+    );
 
 
     peer.on("open", id => {
 
-        console.log("Sender online:", id);
+        console.log(
+            "Sender online:",
+            id
+        );
 
         senderStatus.textContent =
-            "Sender online. Klicke auf STREAM STARTEN.";
-
-    });
-
-
-    peer.on("error", error => {
-
-        console.error("PeerJS Fehler:", error);
-
-        if (error.type === "unavailable-id") {
-
-            senderStatus.textContent =
-                "Sender-ID ist bereits aktiv. Alte Sender-Seite schließen und neu laden.";
-
-            startButton.disabled = true;
-
-        } else {
-
-            senderStatus.textContent =
-                "Verbindungsfehler: " + error.type;
-
-        }
+            "Sender online. Du kannst den Stream starten.";
 
     });
 
@@ -342,20 +356,27 @@ function startSender() {
     peer.on("connection", connection => {
 
         console.log(
-            "Regie verbunden:",
+            "Neue Regie-Verbindung:",
             connection.peer
         );
 
+
         connection.on("open", () => {
 
-            console.log("Regie-Verbindung geöffnet.");
+            console.log(
+                "Regie verbunden."
+            );
 
         });
 
 
         connection.on("data", data => {
 
-            console.log("Regie-Befehl:", data);
+            console.log(
+                "Regie-Befehl:",
+                data
+            );
+
 
             if (!data || !data.type) {
                 return;
@@ -364,7 +385,7 @@ function startSender() {
 
             if (data.type === "text") {
 
-                showText(
+                showMessage(
                     data.text,
                     data.duration || 10000
                 );
@@ -382,27 +403,92 @@ function startSender() {
 
         });
 
+
+        connection.on("close", () => {
+
+            console.log(
+                "Regie getrennt."
+            );
+
+        });
+
     });
 
+
+    /*
+       Zuschauer oder andere Geräte rufen den Sender an.
+       Der Sender beantwortet den Call mit seinem Bildschirm.
+    */
 
     peer.on("call", call => {
 
         console.log(
-            "Zuschauer möchte den Stream sehen:",
+            "Videoanfrage von:",
             call.peer
         );
 
+
         if (!screenStream) {
 
-            console.log(
+            console.warn(
                 "Noch kein Bildschirmstream vorhanden."
             );
+
+            /*
+               Ein One-Way-Call kann ohne eigenen Stream
+               beantwortet werden, aber wir wollen erst
+               antworten, wenn der Bildschirm läuft.
+            */
 
             return;
 
         }
 
+
         call.answer(screenStream);
+
+
+        console.log(
+            "Bildschirmstream an Zuschauer gesendet."
+        );
+
+    });
+
+
+    peer.on("error", error => {
+
+        console.error(
+            "PeerJS Sender Fehler:",
+            error
+        );
+
+
+        if (error.type === "unavailable-id") {
+
+            senderStatus.textContent =
+                "Sender ist bereits geöffnet. Schließe ein anderes Sender-Fenster.";
+
+        } else {
+
+            senderStatus.textContent =
+                "Verbindungsfehler: " +
+                error.type;
+
+        }
+
+    });
+
+
+    peer.on("disconnected", () => {
+
+        console.log(
+            "PeerJS getrennt."
+        );
+
+        senderStatus.textContent =
+            "Verbindung getrennt. Verbinde erneut...";
+
+        peer.reconnect();
 
     });
 
@@ -410,89 +496,106 @@ function startSender() {
 
 
 /* =========================================================
-   SCREEN START
+   BILDSCHIRM STARTEN
 ========================================================= */
 
-startButton.addEventListener("click", async () => {
+startStream.addEventListener(
+    "click",
+    async () => {
 
-    try {
+        try {
 
-        screenStream =
-            await navigator.mediaDevices.getDisplayMedia({
-
-                video: {
-                    frameRate: {
-                        ideal: 30,
-                        max: 60
-                    }
-                },
-
-                audio: false
-
-            });
+            senderStatus.textContent =
+                "Bildschirm-Auswahl wird geöffnet...";
 
 
-        hiddenLocalVideo.srcObject =
-            screenStream;
+            screenStream =
+                await navigator.mediaDevices.getDisplayMedia({
+
+                    video: {
+                        frameRate: {
+                            ideal: 30,
+                            max: 60
+                        }
+                    },
+
+                    audio: false
+
+                });
 
 
-        senderPanel.style.display =
-            "none";
+            const track =
+                screenStream.getVideoTracks()[0];
 
 
-        console.log(
-            "Bildschirmübertragung gestartet."
-        );
+            senderStatus.textContent =
+                "STREAM LÄUFT";
 
 
-        senderStatus.textContent =
-            "Stream läuft.";
+            startStream.textContent =
+                "STREAM LÄUFT";
 
 
-        const videoTrack =
-            screenStream.getVideoTracks()[0];
+            startStream.disabled =
+                true;
 
 
-        videoTrack.addEventListener(
-            "ended",
-            () => {
+            /*
+               Wenn Minecraft beendet wird oder
+               der Benutzer „Teilen beenden“ drückt.
+            */
 
-                screenStream = null;
+            track.addEventListener(
+                "ended",
+                () => {
 
-                senderPanel.style.display =
-                    "flex";
+                    screenStream = null;
 
-                senderStatus.textContent =
-                    "Bildschirmübertragung beendet.";
+                    senderStatus.textContent =
+                        "Bildschirmübertragung beendet.";
 
-            }
-        );
+                    startStream.textContent =
+                        "STREAM STARTEN";
+
+                    startStream.disabled =
+                        false;
+
+                }
+            );
 
 
-    } catch (error) {
+            console.log(
+                "Bildschirmstream gestartet."
+            );
 
-        console.error(error);
 
-        senderStatus.textContent =
-            "Bildschirmaufnahme wurde nicht gestartet.";
+        } catch (error) {
+
+            console.error(
+                "getDisplayMedia Fehler:",
+                error
+            );
+
+
+            senderStatus.textContent =
+                "Bildschirmaufnahme wurde abgebrochen.";
+
+        }
 
     }
-
-});
+);
 
 
 /* =========================================================
    VIEWER
 ========================================================= */
 
-if (!isSender) {
-
-    startViewer();
-
-}
-
-
 function startViewer() {
+
+    console.log(
+        "Viewer wird gestartet..."
+    );
+
 
     peer = new Peer({
 
@@ -501,15 +604,15 @@ function startViewer() {
     });
 
 
-    peer.on("open", myId => {
+    peer.on("open", viewerId => {
 
         console.log(
-            "Viewer verbunden:",
-            myId
+            "Viewer online:",
+            viewerId
         );
 
 
-        connectToStream(myId);
+        connectToSender();
 
     });
 
@@ -517,49 +620,80 @@ function startViewer() {
     peer.on("error", error => {
 
         console.error(
-            "Viewer PeerJS Fehler:",
+            "Viewer Fehler:",
             error
+        );
+
+
+        setTimeout(() => {
+
+            reconnectViewer();
+
+        }, 3000);
+
+    });
+
+
+    peer.on("disconnected", () => {
+
+        console.log(
+            "Viewer getrennt."
         );
 
         setTimeout(() => {
 
-            if (!screenStream) {
-                startViewer();
-            }
+            reconnectViewer();
 
-        }, 4000);
+        }, 3000);
 
     });
 
 }
 
 
-function connectToStream(myId) {
+/* =========================================================
+   VIEWER -> SENDER
+========================================================= */
+
+function connectToSender() {
 
     console.log(
-        "Verbinde mit Sender:",
-        STREAM_ID
+        "Rufe Stream-Sender an..."
     );
 
 
     const call =
         peer.call(
-            STREAM_ID,
-            new MediaStream()
+            STREAM_PEER_ID,
+            new MediaStream(),
+            {
+                metadata: {
+                    type: "viewer"
+                }
+            }
         );
 
 
-    call.on("stream", stream => {
+    call.on("stream", remoteStream => {
 
         console.log(
-            "STREAM EMPFANGEN"
+            "ECHTER STREAM EMPFANGEN"
         );
 
-        remoteVideo.srcObject =
-            stream;
 
-        remoteVideo.play()
-            .catch(() => {});
+        video.srcObject =
+            remoteStream;
+
+
+        video.play()
+            .catch(error => {
+
+                console.log(
+                    "Autoplay wartet auf Browser:",
+                    error
+                );
+
+            });
 
     });
 
@@ -567,20 +701,19 @@ function connectToStream(myId) {
     call.on("close", () => {
 
         console.log(
-            "Stream-Verbindung geschlossen."
+            "Stream geschlossen."
         );
 
-        remoteVideo.srcObject = null;
+
+        video.srcObject =
+            null;
+
 
         setTimeout(() => {
 
-            if (!isSender) {
+            reconnectViewer();
 
-                reconnectViewer();
-
-            }
-
-        }, 3000);
+        }, 2000);
 
     });
 
@@ -588,17 +721,14 @@ function connectToStream(myId) {
     call.on("error", error => {
 
         console.error(
-            "Call Fehler:",
+            "Video Call Fehler:",
             error
         );
 
+
         setTimeout(() => {
 
-            if (!isSender) {
-
-                reconnectViewer();
-
-            }
+            reconnectViewer();
 
         }, 3000);
 
@@ -606,6 +736,10 @@ function connectToStream(myId) {
 
 }
 
+
+/* =========================================================
+   VIEWER NEU VERBINDEN
+========================================================= */
 
 function reconnectViewer() {
 
@@ -617,6 +751,11 @@ function reconnectViewer() {
 
     } catch (e) {}
 
+
+    video.srcObject =
+        null;
+
+
     startViewer();
 
 }
@@ -626,20 +765,29 @@ function reconnectViewer() {
    TEXT
 ========================================================= */
 
-function showText(text, duration) {
+function showMessage(
+    text,
+    duration
+) {
 
-    clearTimeout(textTimer);
+    clearTimeout(messageTimer);
 
-    textOverlay.textContent =
+
+    message.textContent =
         text;
 
-    textOverlay.classList.add("show");
+
+    message.classList.add(
+        "show"
+    );
 
 
-    textTimer =
+    messageTimer =
         setTimeout(() => {
 
-            textOverlay.classList.remove("show");
+            message.classList.remove(
+                "show"
+            );
 
         }, duration);
 
@@ -650,17 +798,24 @@ function showText(text, duration) {
    SICHTSCHUTZ
 ========================================================= */
 
-function showPrivacy(duration) {
+function showPrivacy(
+    duration
+) {
 
     clearTimeout(privacyTimer);
 
-    privacy.classList.add("active");
+
+    privacy.classList.add(
+        "active"
+    );
 
 
     privacyTimer =
         setTimeout(() => {
 
-            privacy.classList.remove("active");
+            privacy.classList.remove(
+                "active"
+            );
 
         }, duration);
 

@@ -9,171 +9,162 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+*{box-sizing:border-box}
 
-* {
-    box-sizing: border-box;
+html,body{
+    margin:0;
+    min-height:100%;
+    background:#090909;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-html,
-body {
-    margin: 0;
-    min-height: 100%;
-    background: #090909;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
+body{
+    padding:25px;
 }
 
-body {
-    padding: 25px;
+.wrapper{
+    width:min(900px,100%);
+    margin:auto;
 }
 
-.wrapper {
-    width: min(900px, 100%);
-    margin: auto;
+header{
+    border-bottom:1px solid #333;
+    padding-bottom:18px;
+    margin-bottom:25px;
 }
 
-header {
-    border-bottom: 1px solid #333;
-    padding-bottom: 18px;
-    margin-bottom: 25px;
+.title{
+    font-size:28px;
+    font-weight:bold;
+    letter-spacing:4px;
 }
 
-.title {
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 4px;
+.subtitle{
+    color:#777;
+    margin-top:7px;
+    font-size:12px;
+    letter-spacing:2px;
 }
 
-.subtitle {
-    color: #777;
-    margin-top: 7px;
-    font-size: 12px;
-    letter-spacing: 2px;
+.status{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px;
+    background:#111;
+    border:1px solid #292929;
+    border-radius:5px;
+    margin-bottom:20px;
 }
 
-.status {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px;
-    background: #111;
-    border: 1px solid #292929;
-    border-radius: 5px;
-    margin-bottom: 20px;
+.statusDot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#777;
 }
 
-.statusDot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #777;
+.statusDot.online{
+    background:#00d26a;
+    box-shadow:0 0 12px rgba(0,210,106,.7);
 }
 
-.statusDot.online {
-    background: #00d26a;
-    box-shadow: 0 0 12px rgba(0,210,106,.7);
+.panel{
+    background:#111;
+    border:1px solid #292929;
+    border-radius:5px;
+    padding:20px;
+    margin-bottom:20px;
 }
 
-.statusText {
-    font-size: 14px;
+.panelTitle{
+    font-size:12px;
+    letter-spacing:2px;
+    color:#999;
+    margin-bottom:14px;
 }
 
-.panel {
-    background: #111;
-    border: 1px solid #292929;
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 20px;
+textarea{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+    border:1px solid #333;
+    background:#080808;
+    color:#fff;
+    padding:13px;
+    border-radius:4px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:15px;
+    outline:none;
 }
 
-.panelTitle {
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: #999;
-    margin-bottom: 14px;
+textarea:focus{
+    border-color:#666;
 }
 
-textarea {
-    width: 100%;
-    min-height: 100px;
-    resize: vertical;
-    border: 1px solid #333;
-    background: #080808;
-    color: white;
-    padding: 13px;
-    border-radius: 4px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 15px;
-    outline: none;
+button{
+    border:1px solid #3a3a3a;
+    background:#191919;
+    color:#fff;
+    border-radius:4px;
+    padding:11px 16px;
+    margin-top:10px;
+    margin-right:6px;
+    cursor:pointer;
 }
 
-textarea:focus {
-    border-color: #666;
+button:hover{
+    background:#292929;
 }
 
-button {
-    border: 1px solid #3a3a3a;
-    background: #191919;
-    color: white;
-    border-radius: 4px;
-    padding: 11px 16px;
-    margin-top: 10px;
-    margin-right: 6px;
-    cursor: pointer;
+button:disabled{
+    opacity:.4;
+    cursor:not-allowed;
 }
 
-button:hover {
-    background: #292929;
+button.danger{
+    border-color:#7b2222;
+    background:#270c0c;
 }
 
-button:disabled {
-    opacity: .4;
-    cursor: not-allowed;
+button.danger:hover{
+    background:#421010;
 }
 
-button.danger {
-    border-color: #7b2222;
-    background: #270c0c;
+.quick{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
 }
 
-button.danger:hover {
-    background: #421010;
+.quick button{
+    margin:0;
 }
 
-.quick {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+.log{
+    background:#050505;
+    border:1px solid #222;
+    border-radius:4px;
+    padding:12px;
+    height:180px;
+    overflow-y:auto;
+    font-family:Consolas,monospace;
+    font-size:12px;
+    color:#888;
 }
 
-.quick button {
-    margin: 0;
+.logLine{
+    margin-bottom:6px;
 }
 
-.log {
-    background: #050505;
-    border: 1px solid #222;
-    border-radius: 4px;
-    padding: 12px;
-    height: 180px;
-    overflow-y: auto;
-    font-family: Consolas, monospace;
-    font-size: 12px;
-    color: #888;
+.logLine.good{
+    color:#66d98b;
 }
 
-.logLine {
-    margin-bottom: 6px;
+.logLine.bad{
+    color:#e86b6b;
 }
-
-.logLine.good {
-    color: #66d98b;
-}
-
-.logLine.bad {
-    color: #e86b6b;
-}
-
 </style>
 </head>
 
@@ -181,103 +172,101 @@ button.danger:hover {
 
 <div class="wrapper">
 
-    <header>
-        <div class="title">CCTV REGIE</div>
-        <div class="subtitle">
-            LIVE STREAM STEUERUNG
-        </div>
-    </header>
+<header>
+    <div class="title">CCTV REGIE</div>
+    <div class="subtitle">
+        LIVE STREAM STEUERUNG
+    </div>
+</header>
 
-    <div class="status">
+<div class="status">
 
-        <div
-            id="statusDot"
-            class="statusDot">
-        </div>
-
-        <div
-            id="statusText"
-            class="statusText">
-            Verbindung wird hergestellt...
-        </div>
-
+    <div
+        id="statusDot"
+        class="statusDot">
     </div>
 
-    <div class="panel">
+    <div id="statusText">
+        Verbindung wird hergestellt...
+    </div>
 
-        <div class="panelTitle">
-            TEXT EINBLENDEN
-        </div>
+</div>
 
-        <textarea
-            id="textInput"
-            placeholder="Text eingeben..."></textarea>
+<div class="panel">
+
+    <div class="panelTitle">
+        TEXT EINBLENDEN
+    </div>
+
+    <textarea
+        id="textInput"
+        placeholder="Text eingeben..."></textarea>
+
+    <button
+        id="sendText"
+        disabled>
+        TEXT SENDEN
+    </button>
+
+</div>
+
+<div class="panel">
+
+    <div class="panelTitle">
+        SCHNELLTEXT
+    </div>
+
+    <div class="quick">
 
         <button
-            id="sendText"
-            disabled>
-            TEXT SENDEN
+            class="quickText"
+            data-text="BIN GLEICH WIEDER DA">
+            BIN GLEICH WIEDER DA
+        </button>
+
+        <button
+            class="quickText"
+            data-text="KURZE PAUSE">
+            KURZE PAUSE
+        </button>
+
+        <button
+            class="quickText"
+            data-text="STREAM LÄUFT">
+            STREAM LÄUFT
         </button>
 
     </div>
 
-    <div class="panel">
+</div>
 
-        <div class="panelTitle">
-            SCHNELLTEXT
-        </div>
+<div class="panel">
 
-        <div class="quick">
-
-            <button
-                class="quickText"
-                data-text="BIN GLEICH WIEDER DA">
-                BIN GLEICH WIEDER DA
-            </button>
-
-            <button
-                class="quickText"
-                data-text="KURZE PAUSE">
-                KURZE PAUSE
-            </button>
-
-            <button
-                class="quickText"
-                data-text="STREAM LÄUFT">
-                STREAM LÄUFT
-            </button>
-
-        </div>
-
+    <div class="panelTitle">
+        SICHTSCHUTZ
     </div>
 
-    <div class="panel">
+    <button
+        id="privacyButton"
+        class="danger"
+        disabled>
+        SICHTSCHUTZ AKTIVIEREN
+    </button>
 
-        <div class="panelTitle">
-            SICHTSCHUTZ
-        </div>
+</div>
 
-        <button
-            id="privacyButton"
-            class="danger"
-            disabled>
-            SICHTSCHUTZ AKTIVIEREN
-        </button>
+<div class="panel">
 
+    <div class="panelTitle">
+        REGIE LOG
     </div>
 
-    <div class="panel">
-
-        <div class="panelTitle">
-            REGIE LOG
-        </div>
-
-        <div
-            id="log"
-            class="log">
-        </div>
-
+    <div
+        id="log"
+        class="log">
     </div>
+
+</div>
 
 </div>
 
@@ -285,7 +274,7 @@ button.danger:hover {
 
 /* =========================================================
    SUPABASE
-   ========================================================= */
+========================================================= */
 
 const SUPABASE_URL =
     "https://zxaczahnnnztcglsinej.supabase.co";
@@ -300,15 +289,15 @@ const supabaseClient =
     );
 
 /* =========================================================
-   EINSTELLUNGEN
-   ========================================================= */
+   ROOM
+========================================================= */
 
 const ROOM =
     "cctv-live-stream";
 
 /* =========================================================
    ELEMENTE
-   ========================================================= */
+========================================================= */
 
 const statusDot =
     document.getElementById(
@@ -341,21 +330,23 @@ const log =
     );
 
 /* =========================================================
-   STATUS
-   ========================================================= */
+   VARIABLEN
+========================================================= */
 
 let channel = null;
+
 let connected = false;
+
 let streamOnline = false;
 
 /* =========================================================
    LOG
-   ========================================================= */
+========================================================= */
 
 function addLog(
     message,
-    type = ""
-) {
+    type=""
+){
 
     const line =
         document.createElement(
@@ -365,15 +356,12 @@ function addLog(
     line.className =
         "logLine " + type;
 
-    const time =
+    line.textContent =
+        "[" +
         new Date()
             .toLocaleTimeString(
                 "de-DE"
-            );
-
-    line.textContent =
-        "[" +
-        time +
+            ) +
         "] " +
         message;
 
@@ -384,12 +372,12 @@ function addLog(
 }
 
 /* =========================================================
-   STATUS ANZEIGE
-   ========================================================= */
+   STATUS
+========================================================= */
 
-function updateStatus() {
+function updateStatus(){
 
-    if (!connected) {
+    if(!connected){
 
         statusDot.className =
             "statusDot";
@@ -406,7 +394,7 @@ function updateStatus() {
         return;
     }
 
-    if (!streamOnline) {
+    if(!streamOnline){
 
         statusDot.className =
             "statusDot";
@@ -438,17 +426,17 @@ function updateStatus() {
 
 /* =========================================================
    CHANNEL
-   ========================================================= */
+========================================================= */
 
-async function connectChannel() {
+async function connectChannel(){
 
     channel =
         supabaseClient.channel(
             ROOM,
             {
-                config: {
-                    broadcast: {
-                        self: false
+                config:{
+                    broadcast:{
+                        self:false
                     }
                 }
             }
@@ -456,10 +444,8 @@ async function connectChannel() {
 
     channel.on(
         "broadcast",
-        {
-            event: "signal"
-        },
-        ({ payload }) => {
+        {event:"signal"},
+        ({payload})=>{
 
             handleSignal(
                 payload
@@ -468,106 +454,72 @@ async function connectChannel() {
         }
     );
 
-    const status =
-        await new Promise(
-            resolve => {
+    channel.subscribe(
+        async state=>{
 
-                channel.subscribe(
-                    state => {
+            console.log(
+                "Supabase:",
+                state
+            );
 
-                        console.log(
-                            "Supabase:",
-                            state
-                        );
+            if(
+                state ===
+                "SUBSCRIBED"
+            ){
 
-                        if (
-                            state ===
-                                "SUBSCRIBED" ||
-                            state ===
-                                "CHANNEL_ERROR" ||
-                            state ===
-                                "TIMED_OUT"
-                        ) {
+                connected = true;
 
-                            resolve(
-                                state
-                            );
+                updateStatus();
 
-                        }
-
-                    }
+                addLog(
+                    "Regie mit Stream-System verbunden.",
+                    "good"
                 );
 
+                await sendSignal({
+                    type:"status-request"
+                });
+
             }
-        );
 
-    if (
-        status !==
-        "SUBSCRIBED"
-    ) {
-
-        connected = false;
-
-        updateStatus();
-
-        addLog(
-            "Supabase-Verbindung fehlgeschlagen.",
-            "bad"
-        );
-
-        return;
-    }
-
-    connected = true;
-
-    updateStatus();
-
-    addLog(
-        "Regie mit Stream-System verbunden.",
-        "good"
+        }
     );
-
-    await sendSignal({
-        type: "status-request"
-    });
 }
 
 /* =========================================================
    SIGNAL SENDEN
-   ========================================================= */
+========================================================= */
 
 async function sendSignal(
     payload
-) {
+){
 
-    if (!channel) return;
+    if(!channel)return;
 
     await channel.send({
-        type: "broadcast",
-        event: "signal",
+        type:"broadcast",
+        event:"signal",
         payload
     });
 }
 
 /* =========================================================
    SIGNAL EMPFANGEN
-   ========================================================= */
+========================================================= */
 
 function handleSignal(
     message
-) {
+){
 
-    if (
+    if(
         !message ||
         !message.type
-    ) {
-        return;
-    }
+    )return;
 
-    if (
+    if(
         message.type ===
         "streamer-online"
-    ) {
+    ){
 
         streamOnline = true;
 
@@ -581,26 +533,10 @@ function handleSignal(
         return;
     }
 
-    if (
-        message.type ===
-        "streamer-offline"
-    ) {
-
-        streamOnline = false;
-
-        updateStatus();
-
-        addLog(
-            "Stream ist offline."
-        );
-
-        return;
-    }
-
-    if (
+    if(
         message.type ===
         "streamer-status"
-    ) {
+    ){
 
         streamOnline =
             message.online === true;
@@ -615,23 +551,57 @@ function handleSignal(
 
         return;
     }
+
+    if(
+        message.type ===
+        "streamer-offline"
+    ){
+
+        streamOnline = false;
+
+        updateStatus();
+
+        addLog(
+            "Stream ist offline."
+        );
+
+        return;
+    }
+
 }
 
 /* =========================================================
-   TEXT SENDEN
-   ========================================================= */
+   COMMAND
+========================================================= */
+
+async function sendCommand(
+    payload
+){
+
+    if(!channel)return;
+
+    await channel.send({
+        type:"broadcast",
+        event:"command",
+        payload
+    });
+}
+
+/* =========================================================
+   TEXT
+========================================================= */
 
 async function sendTextCommand(
     text
-) {
+){
 
     text =
         String(text || "")
-            .trim();
+        .trim();
 
-    if (!text) return;
+    if(!text)return;
 
-    if (!streamOnline) {
+    if(!streamOnline){
 
         addLog(
             "Stream ist offline.",
@@ -642,8 +612,11 @@ async function sendTextCommand(
     }
 
     await sendCommand({
-        type: "text",
+
+        type:"text",
+
         text
+
     });
 
     addLog(
@@ -654,29 +627,12 @@ async function sendTextCommand(
 }
 
 /* =========================================================
-   COMMAND SENDEN
-   ========================================================= */
-
-async function sendCommand(
-    payload
-) {
-
-    if (!channel) return;
-
-    await channel.send({
-        type: "broadcast",
-        event: "command",
-        payload
-    });
-}
-
-/* =========================================================
    TEXT BUTTON
-   ========================================================= */
+========================================================= */
 
 sendText.addEventListener(
     "click",
-    async () => {
+    async ()=>{
 
         await sendTextCommand(
             textInput.value
@@ -689,17 +645,16 @@ sendText.addEventListener(
 
 /* =========================================================
    ENTER
-   ========================================================= */
+========================================================= */
 
 textInput.addEventListener(
     "keydown",
-    async event => {
+    async event=>{
 
-        if (
-            event.key ===
-                "Enter" &&
+        if(
+            event.key === "Enter" &&
             !event.shiftKey
-        ) {
+        ){
 
             event.preventDefault();
 
@@ -716,36 +671,36 @@ textInput.addEventListener(
 
 /* =========================================================
    SCHNELLTEXT
-   ========================================================= */
+========================================================= */
 
 document
-    .querySelectorAll(
-        ".quickText"
-    )
-    .forEach(button => {
+.querySelectorAll(
+    ".quickText"
+)
+.forEach(button=>{
 
-        button.addEventListener(
-            "click",
-            async () => {
+    button.addEventListener(
+        "click",
+        async ()=>{
 
-                await sendTextCommand(
-                    button.dataset.text
-                );
+            await sendTextCommand(
+                button.dataset.text
+            );
 
-            }
-        );
+        }
+    );
 
-    });
+});
 
 /* =========================================================
    SICHTSCHUTZ
-   ========================================================= */
+========================================================= */
 
 privacyButton.addEventListener(
     "click",
-    async () => {
+    async ()=>{
 
-        if (!streamOnline) {
+        if(!streamOnline){
 
             addLog(
                 "Stream ist offline.",
@@ -756,7 +711,7 @@ privacyButton.addEventListener(
         }
 
         await sendCommand({
-            type: "privacy"
+            type:"privacy"
         });
 
         addLog(
@@ -769,7 +724,7 @@ privacyButton.addEventListener(
 
 /* =========================================================
    START
-   ========================================================= */
+========================================================= */
 
 updateStatus();
 

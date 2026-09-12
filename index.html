@@ -6,8 +6,6 @@
 
   <title>CCTV LIVE</title>
 
-  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-
   <style>
     * {
       box-sizing: border-box;
@@ -28,17 +26,30 @@
       position: relative;
     }
 
+    /* ================================
+       STREAM
+    ================================= */
+
     #video {
       position: fixed;
       inset: 0;
+
       width: 100vw;
       height: 100vh;
+
       object-fit: contain;
+
       background: #000;
     }
 
+
+    /* ================================
+       CCTV / LIVE OVERLAY
+    ================================= */
+
     #overlay {
       position: fixed;
+
       top: 20px;
       left: 20px;
 
@@ -49,23 +60,31 @@
       padding: 9px 12px;
 
       background: rgba(5, 5, 5, 0.82);
+
       border: 1px solid rgba(32, 217, 91, 0.45);
+
       border-radius: 7px;
 
       color: white;
+
       font-size: 14px;
       font-weight: 800;
+
       letter-spacing: 0.3px;
 
-      z-index: 50;
+      z-index: 10;
 
       user-select: none;
       pointer-events: none;
     }
 
+
+    /* grüner CCTV-Punkt */
+
     #cctvDot {
       width: 10px;
       height: 10px;
+
       border-radius: 50%;
 
       background: #20d95b;
@@ -73,6 +92,9 @@
       box-shadow:
         0 0 8px rgba(32, 217, 91, 0.9);
     }
+
+
+    /* LIVE */
 
     #liveBadge {
       padding: 5px 8px;
@@ -83,11 +105,18 @@
 
       font-size: 12px;
       font-weight: 900;
+
       color: white;
     }
 
+
+    /* ================================
+       OFFLINE / WARTEN
+    ================================= */
+
     #waiting {
       position: fixed;
+
       inset: 0;
 
       display: flex;
@@ -96,8 +125,9 @@
 
       background: #000;
 
-      z-index: 40;
+      z-index: 5;
     }
+
 
     #waitingBox {
       text-align: center;
@@ -105,22 +135,33 @@
       padding: 25px 30px;
 
       background: #101010;
+
       border: 1px solid #292929;
+
       border-radius: 10px;
 
       color: white;
     }
 
+
     #waitingTitle {
       font-size: 21px;
       font-weight: 700;
+
       margin-bottom: 8px;
     }
 
+
     #waitingText {
       color: #888;
+
       font-size: 13px;
     }
+
+
+    /* ================================
+       LADEKREIS
+    ================================= */
 
     #loader {
       width: 32px;
@@ -129,6 +170,7 @@
       margin: 0 auto 17px;
 
       border: 4px solid #292929;
+
       border-top-color: #20d95b;
 
       border-radius: 50%;
@@ -136,7 +178,9 @@
       animation: spin 0.8s linear infinite;
     }
 
+
     @keyframes spin {
+
       from {
         transform: rotate(0deg);
       }
@@ -144,7 +188,13 @@
       to {
         transform: rotate(360deg);
       }
+
     }
+
+
+    /* ================================
+       STREAM STARTEN
+    ================================= */
 
     #startButton {
       position: fixed;
@@ -154,7 +204,7 @@
 
       transform: translateX(-50%);
 
-      z-index: 100;
+      z-index: 20;
 
       padding: 11px 18px;
 
@@ -163,6 +213,7 @@
       color: white;
 
       border: 1px solid #333;
+
       border-radius: 7px;
 
       cursor: pointer;
@@ -171,129 +222,15 @@
       font-weight: 700;
     }
 
+
     #startButton:hover {
       background: #242424;
     }
 
-    /*
-    =========================================
-    REGIE-TEXT
-    =========================================
-    */
 
-    #message {
-      position: fixed;
-
-      left: 50%;
-      bottom: 12%;
-
-      transform: translateX(-50%);
-
-      z-index: 80;
-
-      max-width: 90vw;
-
-      padding: 14px 22px;
-
-      background: rgba(0, 0, 0, 0.86);
-
-      border: 1px solid rgba(255,255,255,0.25);
-
-      border-radius: 8px;
-
-      color: white;
-
-      font-size: clamp(18px, 3vw, 34px);
-      font-weight: 800;
-
-      text-align: center;
-
-      display: none;
-
-      pointer-events: none;
-    }
-
-    /*
-    =========================================
-    SICHTSCHUTZ
-    =========================================
-    */
-
-    #privacy {
-      position: fixed;
-      inset: 0;
-
-      z-index: 200;
-
-      background: #000;
-
-      opacity: 0;
-
-      pointer-events: none;
-
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      flex-direction: column;
-
-      transition: opacity 1.5s ease;
-    }
-
-    #privacySignal {
-      width: 18px;
-      height: 18px;
-
-      border-radius: 50%;
-
-      background: #e83232;
-
-      box-shadow: 0 0 20px rgba(232,50,50,0.9);
-
-      margin-bottom: 22px;
-
-      animation: warningPulse 0.8s infinite;
-    }
-
-    @keyframes warningPulse {
-      0% {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 0.25;
-        transform: scale(0.75);
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    #privacyTitle {
-      color: white;
-
-      font-size: clamp(22px, 5vw, 48px);
-
-      font-weight: 900;
-
-      letter-spacing: 3px;
-
-      text-align: center;
-    }
-
-    #privacyText {
-      margin-top: 12px;
-
-      color: #777;
-
-      font-size: 14px;
-
-      text-align: center;
-    }
+    /* ================================
+       MOBILE
+    ================================= */
 
     @media (max-width: 600px) {
 
@@ -308,14 +245,22 @@
 
       #liveBadge {
         font-size: 11px;
+
         padding: 4px 6px;
       }
 
     }
+
   </style>
 </head>
 
+
 <body>
+
+
+  <!-- =================================
+       MINECRAFT VIDEO
+  ================================== -->
 
   <video
     id="video"
@@ -324,7 +269,13 @@
     muted
   ></video>
 
+
+  <!-- =================================
+       CCTV / LIVE
+  ================================== -->
+
   <div id="overlay">
+
     <span id="cctvDot"></span>
 
     <span>CCTV</span>
@@ -332,7 +283,13 @@
     <span id="liveBadge">
       LIVE
     </span>
+
   </div>
+
+
+  <!-- =================================
+       WARTEN
+  ================================== -->
 
   <div id="waiting">
 
@@ -352,46 +309,34 @@
 
   </div>
 
+
+  <!-- =================================
+       STREAM STARTEN
+       NUR FÜR DEN STREAMER
+  ================================== -->
+
   <button id="startButton">
     STREAM STARTEN
   </button>
-
-  <div id="message"></div>
-
-  <div id="privacy">
-
-    <div id="privacySignal"></div>
-
-    <div id="privacyTitle">
-      STREAM SICHTSCHUTZ
-    </div>
-
-    <div id="privacyText">
-      Der Stream wird kurz ausgeblendet.
-    </div>
-
-  </div>
 
 
   <script>
 
     /*
     ============================================================
-    CCTV LIVE
+    MINECRAFT CCTV LIVE
     ============================================================
 
-    WICHTIG:
+    KEIN AUDIO
 
-    Diese ID gehört ausschließlich zum Sender.
+    Es wird ausschließlich Video übertragen.
 
-    Besucher bekommen automatisch eigene Peer-IDs.
+    Der Bildschirm wird mit getDisplayMedia()
+    aufgenommen.
 
-    Der Sender ruft anschließend jeden Besucher
-    mit seinem Minecraft-Bild an.
     ============================================================
     */
 
-    const STREAM_ID = "a-mforever-cctv-stream-2026";
 
     const video =
       document.getElementById("video");
@@ -402,282 +347,35 @@
     const startButton =
       document.getElementById("startButton");
 
-    const message =
-      document.getElementById("message");
-
-    const privacy =
-      document.getElementById("privacy");
+    const overlay =
+      document.getElementById("overlay");
 
 
-    let peer = null;
     let stream = null;
 
-    let isBroadcaster = false;
-
-    const viewerCalls = new Map();
-
 
     /*
     ============================================================
-    PEERJS
-    ============================================================
-    */
-
-    function createViewerPeer() {
-
-      peer = new Peer(undefined, {
-        debug: 1,
-
-        config: {
-          iceServers: [
-            {
-              urls: "stun:stun.l.google.com:19302"
-            }
-          ]
-        }
-      });
-
-
-      peer.on("open", function(viewerId) {
-
-        console.log(
-          "Viewer Peer-ID:",
-          viewerId
-        );
-
-
-        /*
-        Zum Sender verbinden
-        */
-
-        const connection =
-          peer.connect(
-            STREAM_ID,
-            {
-              reliable: true
-            }
-          );
-
-
-        connection.on(
-          "open",
-          function() {
-
-            console.log(
-              "Mit Stream verbunden."
-            );
-
-            connection.send({
-              type: "viewer"
-            });
-
-          }
-        );
-
-
-        connection.on(
-          "data",
-          function(data) {
-
-            handleCommand(data);
-
-          }
-        );
-
-
-        connection.on(
-          "close",
-          function() {
-
-            console.log(
-              "Verbindung zum Stream geschlossen."
-            );
-
-          }
-        );
-
-
-        connection.on(
-          "error",
-          function(error) {
-
-            console.error(
-              "Datenverbindung:",
-              error
-            );
-
-          }
-        );
-
-      });
-
-
-      /*
-      ==========================================================
-      VIDEO VOM STREAMER EMPFANGEN
-      ==========================================================
-      */
-
-      peer.on(
-        "call",
-        function(call) {
-
-          console.log(
-            "Videoanruf vom Streamer."
-          );
-
-
-          /*
-          Einseitiger Stream:
-
-          Wir senden KEIN eigenes Video zurück.
-          */
-
-          call.answer();
-
-
-          call.on(
-            "stream",
-            function(remoteStream) {
-
-              console.log(
-                "LIVE-STREAM EMPFANGEN."
-              );
-
-              video.srcObject =
-                remoteStream;
-
-
-              video.muted =
-                true;
-
-
-              video.play()
-                .catch(
-                  function(error) {
-
-                    console.warn(
-                      "Video konnte nicht automatisch gestartet werden:",
-                      error
-                    );
-
-                  }
-                );
-
-
-              waiting.style.display =
-                "none";
-
-            }
-          );
-
-
-          call.on(
-            "close",
-            function() {
-
-              showWaiting();
-
-            }
-          );
-
-
-          call.on(
-            "error",
-            function(error) {
-
-              console.error(
-                "Videoverbindung:",
-                error
-              );
-
-              showWaiting();
-
-            }
-          );
-
-        }
-      );
-
-
-      peer.on(
-        "error",
-        function(error) {
-
-          console.error(
-            "PeerJS:",
-            error
-          );
-
-
-          if (
-            error.type ===
-            "peer-unavailable"
-          ) {
-
-            setTimeout(
-              reconnectViewer,
-              2500
-            );
-
-          }
-
-        }
-      );
-
-    }
-
-
-    /*
-    ============================================================
-    VIEWER NEU VERBINDEN
-    ============================================================
-    */
-
-    function reconnectViewer() {
-
-      if (isBroadcaster) {
-        return;
-      }
-
-      if (
-        peer &&
-        !peer.destroyed
-      ) {
-
-        try {
-          peer.destroy();
-        }
-        catch (e) {}
-
-      }
-
-      peer = null;
-
-      createViewerPeer();
-
-    }
-
-
-    /*
-    ============================================================
-    STREAMER STARTEN
+    STREAM STARTEN
     ============================================================
     */
 
     startButton.addEventListener(
       "click",
-      async function() {
-
-        if (isBroadcaster) {
-          return;
-        }
-
+      async () => {
 
         try {
 
           /*
+          ---------------------------------------------
           Bildschirm auswählen
+          ---------------------------------------------
+
+          WICHTIG:
+
+          audio: false
+
+          Dadurch wird KEIN Ton aufgenommen.
           */
 
           stream =
@@ -697,177 +395,46 @@
 
 
           /*
-          Lokales Video
+          ---------------------------------------------
+          VIDEO ANZEIGEN
+          ---------------------------------------------
           */
 
           video.srcObject =
             stream;
 
+
           video.muted =
             true;
+
 
           await video.play();
 
 
           /*
-          Jetzt wird dieser Browser
-          zum offiziellen Streamer.
+          ---------------------------------------------
+          WARTEN-BILDSCHIRM AUSBLENDEN
+          ---------------------------------------------
           */
 
-          isBroadcaster =
-            true;
+          waiting.style.display =
+            "none";
 
 
           /*
-          Alten Viewer-Peer schließen
+          ---------------------------------------------
+          STARTBUTTON AUSBLENDEN
+          ---------------------------------------------
           */
 
-          if (
-            peer &&
-            !peer.destroyed
-          ) {
-
-            try {
-              peer.destroy();
-            }
-            catch (e) {}
-
-          }
+          startButton.style.display =
+            "none";
 
 
           /*
-          Feste Stream-ID anmelden
-          */
-
-          peer =
-            new Peer(
-              STREAM_ID,
-              {
-                debug: 1,
-
-                config: {
-                  iceServers: [
-                    {
-                      urls:
-                        "stun:stun.l.google.com:19302"
-                    }
-                  ]
-                }
-              }
-            );
-
-
-          peer.on(
-            "open",
-            function(id) {
-
-              console.log(
-                "STREAM ONLINE:",
-                id
-              );
-
-              waiting.style.display =
-                "none";
-
-              startButton.style.display =
-                "none";
-
-            }
-          );
-
-
-          /*
-          ========================================================
-          NEUER BESUCHER
-          ========================================================
-          */
-
-          peer.on(
-            "connection",
-            function(connection) {
-
-              console.log(
-                "Neuer Besucher:",
-                connection.peer
-              );
-
-
-              connection.on(
-                "open",
-                function() {
-
-                  /*
-                  Besucher bekommt seinen
-                  eigenen Videoanruf.
-                  */
-
-                  if (stream) {
-
-                    const call =
-                      peer.call(
-                        connection.peer,
-                        stream
-                      );
-
-
-                    viewerCalls.set(
-                      connection.peer,
-                      call
-                    );
-
-
-                    call.on(
-                      "close",
-                      function() {
-
-                        viewerCalls.delete(
-                          connection.peer
-                        );
-
-                      }
-                    );
-
-
-                    call.on(
-                      "error",
-                      function(error) {
-
-                        console.error(
-                          "Viewer-Call:",
-                          error
-                        );
-
-                        viewerCalls.delete(
-                          connection.peer
-                        );
-
-                      }
-                    );
-
-                  }
-
-                }
-              );
-
-
-              connection.on(
-                "data",
-                function(data) {
-
-                  console.log(
-                    "Viewer:",
-                    data
-                  );
-
-                }
-              );
-
-            }
-          );
-
-
-          /*
-          Stream beendet
+          ---------------------------------------------
+          STREAM ENDE
+          ---------------------------------------------
           */
 
           const track =
@@ -892,10 +459,6 @@
             error
           );
 
-          alert(
-            "Der Bildschirm konnte nicht freigegeben werden."
-          );
-
         }
 
       }
@@ -915,234 +478,44 @@
         stream
           .getTracks()
           .forEach(
-            function(track) {
-              track.stop();
-            }
+            track => track.stop()
           );
 
-        stream = null;
+        stream =
+          null;
 
       }
 
-
-      viewerCalls.forEach(
-        function(call) {
-
-          try {
-            call.close();
-          }
-          catch (e) {}
-
-        }
-      );
-
-
-      viewerCalls.clear();
-
-
-      if (
-        peer &&
-        !peer.destroyed
-      ) {
-
-        try {
-          peer.destroy();
-        }
-        catch (e) {}
-
-      }
-
-
-      peer = null;
-
-      isBroadcaster =
-        false;
 
       video.srcObject =
         null;
 
 
-      showWaiting();
+      waiting.style.display =
+        "flex";
 
 
       startButton.style.display =
         "block";
 
-
-      /*
-      Wieder als normaler Zuschauer
-      verbinden.
-      */
-
-      setTimeout(
-        createViewerPeer,
-        1000
-      );
-
     }
 
 
     /*
     ============================================================
-    WARTEN
+    WICHTIG
+    ============================================================
+
+    Aktuell wird das Minecraft-Bild lokal im Browser
+    angezeigt.
+
+    Für die echte Übertragung an andere Besucher muss
+    der MediaStream noch über WebRTC weitergereicht werden.
+
+    Das kommt als nächster Teil.
+
     ============================================================
     */
-
-    function showWaiting() {
-
-      waiting.style.display =
-        "flex";
-
-    }
-
-
-    /*
-    ============================================================
-    REGIE-BEFEHLE
-    ============================================================
-    */
-
-    function handleCommand(data) {
-
-      if (!data) {
-        return;
-      }
-
-
-      /*
-      TEXT
-      */
-
-      if (
-        data.type ===
-        "text"
-      ) {
-
-        showMessage(
-          String(
-            data.text || ""
-          )
-        );
-
-      }
-
-
-      /*
-      SICHTSCHUTZ
-      */
-
-      if (
-        data.type ===
-        "privacy"
-      ) {
-
-        activatePrivacy();
-
-      }
-
-    }
-
-
-    /*
-    ============================================================
-    TEXT EINBLENDEN
-    ============================================================
-    */
-
-    let messageTimer =
-      null;
-
-
-    function showMessage(text) {
-
-      if (!text) {
-        return;
-      }
-
-
-      message.textContent =
-        text;
-
-
-      message.style.display =
-        "block";
-
-
-      clearTimeout(
-        messageTimer
-      );
-
-
-      messageTimer =
-        setTimeout(
-          function() {
-
-            message.style.display =
-              "none";
-
-          },
-          10000
-        );
-
-    }
-
-
-    /*
-    ============================================================
-    SICHTSCHUTZ
-    ============================================================
-    */
-
-    let privacyRunning =
-      false;
-
-
-    function activatePrivacy() {
-
-      if (privacyRunning) {
-        return;
-      }
-
-
-      privacyRunning =
-        true;
-
-
-      privacy.style.opacity =
-        "1";
-
-
-      setTimeout(
-        function() {
-
-          privacy.style.opacity =
-            "0";
-
-        },
-        10000
-      );
-
-
-      setTimeout(
-        function() {
-
-          privacyRunning =
-            false;
-
-        },
-        12000
-      );
-
-    }
-
-
-    /*
-    ============================================================
-    START
-    ============================================================
-    */
-
-    createViewerPeer();
 
   </script>
 
